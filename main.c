@@ -26,10 +26,10 @@
 	
 // Device Config Bits in  DEVCFG2:	
 #pragma config FPLLICLK =	PLL_POSC
-#pragma config FPLLIDIV =	DIV_5
-#pragma config FPLLMULT =	MUL_1
-#pragma config FPLLODIV =	DIV_2
-#pragma config FPLLRNG =	RANGE_BYPASS
+#pragma config FPLLIDIV =	DIV_1
+#pragma config FPLLMULT =	MUL_48
+#pragma config FPLLODIV =	DIV_4
+#pragma config FPLLRNG =	RANGE_5_10_MHZ
 #pragma config UPLLEN =     OFF
 //#pragma config UPLLFSEL =	FREQ_12MHZ
 
@@ -69,24 +69,30 @@ int main() {
     
     T2CONbits.ON = 0;       //W czasie konfiguracji timer musi byc wylaczony
     TMR2 = 0x0000;
-    PR2 = 0x000C;           //Wartosc przy ktorej timer sie przepelnia
-    T2CONbits.TCKPS = 0;    //Prescaler 1, taktowanie uC 1Mhz, takowanie szyny PB2 500kHz, timer taktowany 500kHz
+    PR2 = 0x003C;           //Wartosc przy ktorej timer sie przepelnia
+    T2CONbits.TCKPS = 0b001; //Prescaler 2, gen 10MHz, uC 120MHz, magistrala 60MHz, licznik 30MHz
     T2CONbits.TCS = 0; 
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
     
     
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
-    OC5RS = 0x000B;          //Wspó?czynik wype?nienia 32767/65535 czyli oko?o 50%
+    OC5RS = 0x001E;          //Wspólczynik wypelnienia 50%
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
+    int flaga_skip_start = 0;
     
     while(1)
     {
-        if(TMR2==0x0001)
+        /* SKIP=0 przez pierwsze  333 ns dzi?ania PWM, 
+         * pó?niej SKIP=1, przetwornica w trybie FCCM */
+        if (TMR2==0x000A) {
+            flaga_skip_start = 1;
+        }
+        if (flaga_skip_start) {
             LATBbits.LATB13 = 1;
-        if(TMR2==0)
-            LATBbits.LATB13 = 0;
+        }
+            
     }
     return (EXIT_SUCCESS);
 }
