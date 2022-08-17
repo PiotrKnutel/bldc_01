@@ -9,6 +9,8 @@
 #include <xc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "delay.h"
+#include "uart.h"
 /*
  * 
  */
@@ -45,6 +47,8 @@
 #pragma config JTAGEN = OFF
 
 
+typedef unsigned char uchar_t;
+
 int main() {
     
     ANSELA = 0;
@@ -56,17 +60,23 @@ int main() {
     
     RPA7Rbits.RPA7R = 0b00110; //Pin C2RX_2 skonfigurowany jako wyjscie OC5
     
-    TRISGbits.TRISG6 = 0;
-    TRISGbits.TRISG8 = 0;
+    TRISGbits.TRISG6 = 0;   // pierwotnie C1RX1, aktualnie UART1 TX (niebiski)
+    TRISGbits.TRISG8 = 1;   // pierwotnie C1TX1, aktulanie UART1 RX (zielony)
     TRISBbits.TRISB13 = 0;  // SKIP
-    TRISAbits.TRISA7 = 0;   // PWM // pierowtnie A10
+    TRISAbits.TRISA7 = 0;   // OC5 (PWM), pierowtnie A10
     
-    LATGbits.LATG6 = 0;     // UART RX 1
-    LATGbits.LATG8 = 1;     // UART TX 1
+    //LATGbits.LATG6 = 0;     
+    //LATGbits.LATG8 = 1;     
     LATBbits.LATB13 = 0;    // SKIP
-    //LATAbits.LATA7 = 0;    // PWM
+    //LATAbits.LATA7 = 0;   // PWM
     
+    /* UART 1 */
+    U1RXR = 0b1010;         // powi?zanie UART1 RX z pinem G8 (RPG8)
+    RPG6R = 0b00001;        // powi?zanie UART1 TX z pinem G6 (U1TX)
     
+    UART_Init();
+    
+    /* TIMER 2 do PWM */
     T2CONbits.ON = 0;       //W czasie konfiguracji timer musi byc wylaczony
     TMR2 = 0x0000;
     PR2 = 0x003C;           //Wartosc przy ktorej timer sie przepelnia
@@ -74,13 +84,14 @@ int main() {
     T2CONbits.TCS = 0; 
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
     
-    
+    /* OC5 jako PWM */
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
     OC5RS = 0x001E;          //Wspólczynik wypelnienia 50%
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
-    int flaga_skip_start = 0;
+    int flaga_skip_start = 0;   //flaga, aby wyj SKIP by?o 0, przez okre?lony czas, tylko po uruchomieniu uk?adu
+    static uchar_t x;
     
     while(1)
     {
@@ -92,7 +103,11 @@ int main() {
         if (flaga_skip_start) {
             LATBbits.LATB13 = 1;
         }
-            
+        if (flaga_skip_start) {
+            printf("Wysylam liczbe: %d\n\r", x);
+            x++;
+            delay_ms(1000);
+        }
     }
     return (EXIT_SUCCESS);
 }
