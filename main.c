@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include "delay.h"
 #include "uart.h"
+#include "adc.h"
 /*
  * 
  */
@@ -76,6 +77,9 @@ int main() {
     
     UART_Init();
     
+    ADC_init();
+    
+    
     /* TIMER 2 do PWM */
     T2CONbits.ON = 0;       //W czasie konfiguracji timer musi byc wylaczony
     TMR2 = 0x0000;
@@ -87,7 +91,7 @@ int main() {
     /* OC5 jako PWM */
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
-    OC5RS = 0x001E;          //Wspólczynik wypelnienia 50%
+    OC5RS = 0x001E;         //Wspólczynik wypelnienia 50%
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
     int flaga_skip_start = 0;   //flaga, aby wyj SKIP by?o 0, przez okre?lony czas, tylko po uruchomieniu uk?adu
