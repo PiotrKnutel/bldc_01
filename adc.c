@@ -50,5 +50,33 @@ void ADC_init() {
     //ADC1TIMEbits.DMAEN = 0;         // DMA 0=wy?.
     ADC1TIMEbits.ADCDIV = 1;        // (wa?ne) Tad=2*Tq, dzielnik taktowania ADC
     ADC1TIMEbits.SAMC = 0x3FF;      // (wa?ne) czas próbkowania, 0x3FF = 1025*Tad
+    
+    ADCTRGMODEbits.SH1ALT = 0;      // je?li 0 to AN1 jest wej?ciem ADC 1 (VBAT), te bity umo?liwiaj? po??czenie innego pinu z ADC1 
+    ADCTRGMODEbits.STRGEN1 = 0;     // je?li 0 to nie u?ywa presynchronized triggers
+    ADCTRGMODEbits.SSAMPEN1 = 0;    // je?li 0 to nie u?ywa synchronous sampling
+    
+    ADCIMCON1bits.DIFF1 = 0;        // je?li 0 to AN1 u?ywa trybu Single-ended
+    ADCIMCON1bits.SIGN1 = 0;        // je?li 0 to AN1 u?ywa trybu unsigned data
 
-}
+    /* Rejestr ADCTRGSNS nie zmieniany. Wyszko bity 0. 
+     Wej?cia analogowe reaguja na bocze narastaj?ce. */
+    
+    // nie wiadomo czy potrzebne 
+    ADCCSS1bits.CSS1 = 1;           // wybór AN1 jako wej skanowania,
+    
+    ADCGIRQEN1bits.AGIEN1 = 0;      // wl. przerwania je?li gotowe przetwarzane dane
+    
+    ADCTRG1bits.TRGSRC1 = 0;        // wybór ?ród?a wyzwalania (trigger) AN1, 0=brak wyzwalania
+    
+    /* ADCBASE to rejestr zwi?zany z przerwaniami */
+    
+    /* W??CZENIE ZEGARA PRZETWARZANIA */
+    ADCCON1bits.ON = 1;
+    
+    while (ADCCON2bits.BGVRRDY==0) { }
+    ADCANCONbits.ANEN1 = 1;
+    while (ADCANCONbits.WKRDY1==0) { }
+    ADCCON3bits.DIGEN1 = 1;
+    
+
+}   
