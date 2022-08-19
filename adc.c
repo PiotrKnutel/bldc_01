@@ -12,10 +12,11 @@ void ADC_init() {
     ADCCON1bits.AICPMPEN = 0;   // bo Vdd =< 2.5V
     CFGCONbits.IOANCPEN = 0;    // bo Vdd =< 2.5V
     ADCCON1bits.ON = 0;         // wy?. ADC
+    
     /* Pozosta?? bity ADCCON1 nie zmieniane */
 
     ADCCON2bits.CVDCPL = 0b111; // Kondensator CVD = 17.5pF
-    ADCCON2bits.SAMC = 0x3FF;   // (wa?ne) 1025*Tad, dla Shared_ADC
+    ADCCON2bits.SAMC = 0;   // (wa?ne) 0x3FF=1025*Tad, 0=2*Tad, dla Shared_ADC
     ADCCON2bits.BGVRIEN = 0;    // brak generowania przerwa?, gdy BGVRRDY=1
     ADCCON2bits.REFFLTIEN =0;   // brak generowania przerwa?, gdy REFFLT=1
     ADCCON2bits.EOSIEN = 0;     // brak generowania przerwa?, gdy EOSRDY=1
@@ -62,11 +63,14 @@ void ADC_init() {
      Wej?cia analogowe reaguja na bocze narastaj?ce. */
     
     // nie wiadomo czy potrzebne 
-    ADCCSS1bits.CSS1 = 1;           // wybór AN1 jako wej skanowania,
+    ADCCSS1bits.CSS1 = 1;           // wybór AN1 jako wej skanowania, pozotsa?e wej pomini?te 
     
     ADCGIRQEN1bits.AGIEN1 = 0;      // wl. przerwania je?li gotowe przetwarzane dane
     
-    ADCTRG1bits.TRGSRC1 = 0;        // wybór ?ród?a wyzwalania (trigger) AN1, 0=brak wyzwalania
+    /* !!! Trzeba poprawi? !!! */
+    ADCTRG1bits.TRGSRC1 = 1;  // wybór ?ród?a wyzwalania (trigger) AN1, 
+    /* 0=brak wyzwalania, 0b10000=koniec okresu OC1, 1=software zbocze
+    /* dla ADC Klasy 1 trigger powoduje przerwanie próbkowania i rozpocz?cie konwersji */
     
     /* ADCBASE to rejestr zwi?zany z przerwaniami */
     
