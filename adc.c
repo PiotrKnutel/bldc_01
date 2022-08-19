@@ -19,6 +19,9 @@ void ADC_init() {
     ADCCON1bits.AICPMPEN = 0;       // bo Vdd =< 2.5V
     CFGCONbits.IOANCPEN = 0;        // bo Vdd =< 2.5V
     
+    /* Konfiguracja ADCCON2 */
+    ADCCON2 = 0;                    // nie potrzenbna w przypadku u?ywania tylko wej?? klasy 1 (dedykowanych ADC)
+    
     /* Inicjalizacja "warm up time" - ADCANCON */
     ADCANCON = 0;                   // w tym bity ANENx musz? by? 0
     ADCANCONbits.WKUPCLKCNT = 5;    // 5=2^5=32*Tad, po tylku taktach ADC b?dzie móg? konwertowa? 
@@ -44,20 +47,44 @@ void ADC_init() {
     ADCIMCON1bits.DIFF1 = 0;        // je?li 0 to AN1 u?ywa trybu Single-ended
     ADCIMCON1bits.SIGN1 = 0;        // je?li 0 to AN1 u?ywa trybu unsigned data
     
+    /* Konfiguracja ADCGIRQENx */
+    ADCGIRQEN1 = 0;                 // 0 = wyl. przerwania gdy gotowe przetwarzane danych
+    ADCGIRQEN2 = 0;
+    
+    /* Konfiguracja ADCCSSx */
+    ADCCSS1 = 0;                    // 0 bo nie u?ywane skanowanie, je?li u?ywane to trzeba wybra? wej?cia 
+    ADCCSS2 = 0;            
+
+    /* Konfiguracja ADCCMPCONx */
+    ADCCMPCON1 = 0;                 // 0 = nie u?ywane cyfrowe komparatory   
+    ADCCMPCON2 = 0; 
+    ADCCMPCON3 = 0; 
+    ADCCMPCON4 = 0;
+    
+    /* Konfiguracja ADCFLTRx */
+    ADCFLTR1 = 0;                   // 0 = nie u?ywane filtrowanie poprzez nadpróbowanie
+    ADCFLTR2 = 0;
+    ADCFLTR3 = 0;
+    ADCFLTR4 = 0;
+    
+    /* Ustawienie zródla wyzwalania (trigger) */
+    ADCTRGSNSbits.LVL1 = 0;         // 0 = ADC1 wyzwalany zboczem 
+    ADCTRG1bits.TRGSRC1 = 1;        // wybór ?ród?a wyzwalania (trigger) dla AN1, 
+        /* 0=brak wyzwalania, 0b10000=koniec okresu OC1, 1=zbocze z software'u */
+        /* dla ADC Klasy 1 trigger powoduje przerwanie próbkowania i rozpocz?cie konwersji */
+    
+    /* Wczesne przerwania */
+    ADCEIEN1 = 0;                   // 0 = brak wczesnych przertwa?
+    ADCEIEN2 = 0;
+    
+    /* W??CZENIE ADC */
+    ADCCON1bits.ON = 1;
     
     
     
     
     
-    ADCCON2bits.CVDCPL = 0b111; // Kondensator CVD = 17.5pF
-    ADCCON2bits.SAMC = 0;   // (wa?ne) 0x3FF=1025*Tad, 0=2*Tad, dla Shared_ADC
-    ADCCON2bits.BGVRIEN = 0;    // brak generowania przerwa?, gdy BGVRRDY=1
-    ADCCON2bits.REFFLTIEN =0;   // brak generowania przerwa?, gdy REFFLT=1
-    ADCCON2bits.EOSIEN = 0;     // brak generowania przerwa?, gdy EOSRDY=1
-    ADCCON2bits.ADCEIOVR = 0;   // generowanie przerwa? jest kontrolowane przez ADCEIEN 1 i 2
-    //ADCCON2bits.ECRIEN = 1;     // mo?liwe uruchomienie ADC z zewn?trznego modu?u, np. PTG (Peripherial Trigger Generator)
-    ADCCON2bits.ADCEIS = 0b000; // Wczesne przewanie Shared_ADC jest generowane 1 takt zegara ADC przed ko?cem konwersji
-    ADCCON2bits.ADCDIV = 0x7F;  // (wa?ne) Tad=254*Tq, taktowanie dla Shared_ADC=taktowanie_ADC/254
+   
     
     
     ADCTRGMODEbits.STRGEN1 = 0;     // je?li 0 to nie u?ywa presynchronized triggers
@@ -65,18 +92,14 @@ void ADC_init() {
     
 
 
-    /* Rejestr ADCTRGSNS nie zmieniany. Wyszko bity 0. 
-     Wej?cia analogowe reaguja na bocze narastaj?ce. */
+
     
-    // nie wiadomo czy potrzebne 
-    ADCCSS1bits.CSS1 = 1;           // wybór AN1 jako wej skanowania, pozotsa?e wej pomini?te 
     
-    ADCGIRQEN1bits.AGIEN1 = 0;      // wl. przerwania je?li gotowe przetwarzane dane
+    
+    
     
     /* !!! Trzeba poprawi? !!! */
-    ADCTRG1bits.TRGSRC1 = 1;  // wybór ?ród?a wyzwalania (trigger) AN1, 
-    /* 0=brak wyzwalania, 0b10000=koniec okresu OC1, 1=software zbocze
-    /* dla ADC Klasy 1 trigger powoduje przerwanie próbkowania i rozpocz?cie konwersji */
+    
     
     /* ADCBASE to rejestr zwi?zany z przerwaniami */
     
