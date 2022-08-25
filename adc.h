@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ADC_init();
+void ADC_init(int*);
 
 #endif	/* ADC_H */
 

@@ -78,8 +78,6 @@ int main() {
     
     UART_Init();
     
-    ADC_init();
-    
     
     /* TIMER 2 do PWM */
     T2CONbits.ON = 0;       //W czasie konfiguracji timer musi byc wylaczony
@@ -95,24 +93,20 @@ int main() {
     OC5RS = 0x001E;         //Wspólczynik wypelnienia 50%
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
-    int flaga_skip_start = 0;   //flaga, aby wyj SKIP by?o 0, przez okre?lony czas, tylko po uruchomieniu uk?adu
     static uchar_t x;
+    int wynik_ADC_Vbat;
+    
+    /* SKIP=0 przez pierwsze  333 ns dzi?ania PWM, 
+     * pó?niej SKIP=1, przetwornica w trybie FCCM */
+    while (TMR2<=0x000A);
+    LATBbits.LATB13 = 1;
     
     while(1)
     {
-        /* SKIP=0 przez pierwsze  333 ns dzi?ania PWM, 
-         * pó?niej SKIP=1, przetwornica w trybie FCCM */
-        if (TMR2==0x000A) {
-            flaga_skip_start = 1;
-        }
-        if (flaga_skip_start) {
-            LATBbits.LATB13 = 1;
-        }
-        if (flaga_skip_start) {
-            printf("Wysylam liczbe: %d\n\r", x);
-            x++;
-            delay_ms(1000);
-        }
+        ADC_init(&wynik_ADC_Vbat);
+        printf("Wysylam liczbe: %d, %d\n\r", x, wynik_ADC_Vbat);
+        x++;
+        delay_ms(1000);
     }
     return (EXIT_SUCCESS);
 }

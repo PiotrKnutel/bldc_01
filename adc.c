@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ADC_init() {
+void ADC_init(int *out_result) {
     /* ADC AN 1 */
     /* Procedura z noty, poczawszy od str. 371 
      * i z "reference manual" section 22 (w tym przyk??d 22-1 str. 66). */
@@ -80,36 +80,27 @@ void ADC_init() {
     /* W??CZENIE ADC */
     ADCCON1bits.ON = 1;
     
+    /* Czekanie na stabilno?? napi?cia ref. */
+    while (!ADCCON2bits.BGVRRDY);
+    while (ADCCON2bits.REFFLT);
     
-    
-    
-    
-   
-    
-    
-    ADCTRGMODEbits.STRGEN1 = 0;     // je?li 0 to nie u?ywa presynchronized triggers
-    ADCTRGMODEbits.SSAMPEN1 = 0;    // je?li 0 to nie u?ywa synchronous sampling
-    
-
-
-
-    
-    
-    
-    
-    
-    /* !!! Trzeba poprawi? !!! */
-    
-    
-    /* ADCBASE to rejestr zwi?zany z przerwaniami */
-    
-    /* W??CZENIE ZEGARA PRZETWARZANIA */
-    ADCCON1bits.ON = 1;
-    
-    while (ADCCON2bits.BGVRRDY==0) { }
+    /* Wl?czenie taktownia obwodów analogowych */
     ADCANCONbits.ANEN1 = 1;
-    while (ADCANCONbits.WKRDY1==0) { }
+    
+    /* Czekanie na gotowo?? ADC */
+    while (!ADCANCONbits.WKRDY1);
+    
+    /* Wl?czenie modu?u ADC */
     ADCCON3bits.DIGEN1 = 1;
     
-
+    while(1) {
+        /* Wyzwolenie konwersji */
+        ADCCON3bits.GSWTRG = 1;
+        
+        /* Czekanie, a? konwersja b?dzie uko?czona  */
+        while (ADCDSTAT1bits.ARDY1 == 0);
+        
+        /* pobranie wyniku */
+        (*out_result) = ADCDATA1;
+    }
 }   
