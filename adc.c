@@ -16,8 +16,8 @@ void ADC_init() {
     /* Konfiguracja ADCCON 1 */
     ADCCON1 = 0;                    // bez funkcji z tego rejestru, w tym bit ON=1 (ADC wy?)
     
-    ADCCON1bits.AICPMPEN = 0;       // bo Vdd =< 2.5V
-    CFGCONbits.IOANCPEN = 0;        // bo Vdd =< 2.5V
+    ADCCON1bits.AICPMPEN = 0;       // bo Vdd >= 2.5V
+    CFGCONbits.IOANCPEN = 0;        // bo Vdd >= 2.5V
     
     /* Konfiguracja ADCCON2 */
     ADCCON2 = 0;                    // nie potrzenbna w przypadku u?ywania tylko wej?? klasy 1 (dedykowanych ADC)
@@ -35,7 +35,7 @@ void ADC_init() {
     /* Ustawienie czasu próbowania i zegara konwersji - ADCxTIME */
     /* ADCx, gdzie x to nr dedykowanego ADC */
     ADC1TIMEbits.ADCEIS = 0;        // Wczesne przewanie ADC 1 jest generowane 1 takt zegara ADC przed ko?cem konwersji, je?li ADCEIS=8 to 8 cykli...
-    ADC1TIMEbits.SELRES = 3;        // rozdzielczosc 3=12 bitów
+    //ADC1TIMEbits.SELRES = 3;        // rozdzielczosc 3=12 bitów
     //ADC1TIMEbits.DMAEN = 0;         // DMA 0=wy?. (tego nie rozpozanawa? kompliator)
     ADC1TIMEbits.ADCDIV = 1;        // 1=Tad=2*Tq, dzielnik taktowania ADC
     ADC1TIMEbits.SAMC = 5;          // czas próbkowania, 0x3FF=1025*Tad, 5=5*Tad

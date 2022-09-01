@@ -49,8 +49,12 @@
 
 
 typedef unsigned char uchar_t;
+unsigned int Adcresult[100];
 
 int main() {
+    
+    static unsigned char x= 0;
+    unsigned int wynik_ADC_Vbat= 0;
     
     ANSELA = 0;
     ANSELB = 0;
@@ -93,8 +97,6 @@ int main() {
     OC5RS = 0x001E;         //Wspólczynik wypelnienia 50%
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
-    static uchar_t x;
-    int wynik_ADC_Vbat;
     
     /* SKIP=0 przez pierwsze  333 ns dzi?ania PWM, 
      * pó?niej SKIP=1, przetwornica w trybie FCCM */
@@ -106,9 +108,12 @@ int main() {
     while(1)
     {
         ADC_meas_Vbat(&wynik_ADC_Vbat);
-        printf("Wysylam liczbe: %d, %d\n\r", x, wynik_ADC_Vbat);
+//        printf("Wysylam liczbe: %d, %d\n\r", x, wynik_ADC_Vbat);
+        Adcresult[x]= wynik_ADC_Vbat;
         x++;
-        delay_ms(1000);
+        if(x==100)
+            x= 0;
+//        delay_ms(1000);
     }
     return (EXIT_SUCCESS);
 }
