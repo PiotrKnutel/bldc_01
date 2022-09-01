@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ADC_init(int *out_result) {
+void ADC_init() {
     /* ADC AN 1 */
     /* Procedura z noty, poczawszy od str. 371 
      * i z "reference manual" section 22 (w tym przyk??d 22-1 str. 66). */
@@ -93,6 +93,9 @@ void ADC_init(int *out_result) {
     /* Wl?czenie modu?u ADC */
     ADCCON3bits.DIGEN1 = 1;
     
+}
+    
+void ADC_meas_Vbat(int *out_result) {
     /* Wyzwolenie konwersji */
     ADCCON3bits.GSWTRG = 1;
 

@@ -101,9 +101,11 @@ int main() {
     while (TMR2<=0x000A);
     LATBbits.LATB13 = 1;
     
+    ADC_init();
+    
     while(1)
     {
-        ADC_init(&wynik_ADC_Vbat);
+        ADC_meas_Vbat(&wynik_ADC_Vbat);
         printf("Wysylam liczbe: %d, %d\n\r", x, wynik_ADC_Vbat);
         x++;
         delay_ms(1000);

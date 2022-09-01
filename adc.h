@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ADC_init(int*);
+void ADC_init(void);
+void ADC_meas_Vbat(int*);
 
 #endif	/* ADC_H */
 
