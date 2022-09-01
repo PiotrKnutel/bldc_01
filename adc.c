@@ -93,14 +93,13 @@ void ADC_init(int *out_result) {
     /* Wl?czenie modu?u ADC */
     ADCCON3bits.DIGEN1 = 1;
     
-    while(1) {
-        /* Wyzwolenie konwersji */
-        ADCCON3bits.GSWTRG = 1;
-        
-        /* Czekanie, a? konwersja b?dzie uko?czona  */
-        while (ADCDSTAT1bits.ARDY1 == 0);
-        
-        /* pobranie wyniku */
-        (*out_result) = ADCDATA1;
-    }
+    /* Wyzwolenie konwersji */
+    ADCCON3bits.GSWTRG = 1;
+
+    /* Czekanie, a? konwersja b?dzie uko?czona  */
+    while (ADCDSTAT1bits.ARDY1 == 0);
+
+    /* pobranie wyniku */
+    (*out_result) = ADCDATA1;
+    
 }   
