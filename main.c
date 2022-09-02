@@ -64,7 +64,7 @@ int main() {
     ANSELE = 0;
     ANSELG = 0;
     ANSELAbits.ANSA1 = 1;   // A1 jako wej analogowe (VBAT_ADC)
-    ANSELBbits.ANSB0 = 1;   // B1 jako wej analogowe (Current_Sense_ADC) 
+    ANSELBbits.ANSB0 = 1;   // B0 jako wej analogowe (Current_Sense_ADC) 
     
     
     RPA7Rbits.RPA7R = 0b00110; //Pin C2RX_2 skonfigurowany jako wyjscie OC5
@@ -111,7 +111,7 @@ int main() {
     while(1)
     {
         ADC_meas(&wynik_ADC_Vbat, &wynik_ADC_Current);
-//        printf("Wysylam liczbe: %d, %d\n\r", x, wynik_ADC_Vbat);
+//        printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
         Adcresult[x]= wynik_ADC_Vbat;
         AdcresultCurrent[x]= wynik_ADC_Current;
         x++;
