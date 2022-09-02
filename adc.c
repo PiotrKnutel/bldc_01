@@ -41,6 +41,10 @@ void ADC_init() {
     ADC1TIMEbits.ADCDIV = 1;        // 1=Tad=2*Tq, dzielnik taktowania ADC
     ADC1TIMEbits.SAMC = 5;          // czas próbkowania, 0x3FF=1025*Tad, 5=5*Tad
     
+    ADC2TIMEbits.ADCEIS = 0;
+    ADC2TIMEbits.ADCDIV = 1;
+    ADC2TIMEbits.SAMC = 5;
+    
     /* Ustawienie pinów jako wej?? do konkretnych ADC */
     ADCTRGMODEbits.SH1ALT = 0;      // jesli 0 to AN1 jest wej ADC 1 (VBAT_ADC), te bity umo?liwiaj? po??czenie innego pinu z ADC1 
     ADCTRGMODEbits.SH1ALT = 0;      // AN2 (pin B0) to wej ADC 2 (Current_SEnse_ADC)
