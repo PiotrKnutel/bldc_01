@@ -12,6 +12,7 @@ void ADC_init() {
      * i z "reference manual" section 22 (w tym przyk??d 22-1 str. 66). */
     
     ADC1CFG = DEVADC1;
+    ADC2CFG = DEVADC2;
     
     /* Konfiguracja ADCCON 1 */
     ADCCON1 = 0;                    // bez funkcji z tego rejestru, w tym bit ON=1 (ADC wy?)
@@ -42,10 +43,13 @@ void ADC_init() {
     
     /* Ustawienie pinów jako wej?? do konkretnych ADC */
     ADCTRGMODEbits.SH1ALT = 0;      // jesli 0 to AN1 jest wej ADC 1 (VBAT_ADC), te bity umo?liwiaj? po??czenie innego pinu z ADC1 
-
+    ADCTRGMODEbits.SH1ALT = 0;      // AN2 (pin B0) to wej ADC 2 (Current_SEnse_ADC)
+    
     /* Wybór trybu wej ADC */
     ADCIMCON1bits.DIFF1 = 0;        // je?li 0 to AN1 u?ywa trybu Single-ended
     ADCIMCON1bits.SIGN1 = 0;        // je?li 0 to AN1 u?ywa trybu unsigned data
+    ADCIMCON1bits.DIFF2 = 0;
+    ADCIMCON1bits.SIGN2 = 0;
     
     /* Konfiguracja ADCGIRQENx */
     ADCGIRQEN1 = 0;                 // 0 = wyl. przerwania gdy gotowe przetwarzane danych
@@ -68,10 +72,12 @@ void ADC_init() {
     ADCFLTR4 = 0;
     
     /* Ustawienie zródla wyzwalania (trigger) */
-    ADCTRGSNSbits.LVL1 = 0;         // 0 = ADC1 wyzwalany zboczem 
+    ADCTRGSNSbits.LVL1 = 0;         // 0 = ADC1 wyzwalany zboczem
+    ADCTRGSNSbits.LVL2 = 0;
     ADCTRG1bits.TRGSRC1 = 1;        // wybór ?ród?a wyzwalania (trigger) dla AN1, 
         /* 0=brak wyzwalania, 0b10000=koniec okresu OC1, 1=zbocze z software'u */
         /* dla ADC Klasy 1 trigger powoduje przerwanie próbkowania i rozpocz?cie konwersji */
+    ADCTRG1bits.TRGSRC2 = 1;
     
     /* Wczesne przerwania */
     ADCEIEN1 = 0;                   // 0 = brak wczesnych przertwa?
@@ -86,23 +92,27 @@ void ADC_init() {
     
     /* Wl?czenie taktownia obwodów analogowych */
     ADCANCONbits.ANEN1 = 1;
+    ADCANCONbits.ANEN2 = 1;
     
     /* Czekanie na gotowo?? ADC */
     while (!ADCANCONbits.WKRDY1);
+    while (!ADCANCONbits.WKRDY2);
     
     /* Wl?czenie modu?u ADC */
     ADCCON3bits.DIGEN1 = 1;
-    
+    ADCCON3bits.DIGEN2 = 1;
 }
     
-void ADC_meas_Vbat(int *out_result) {
+void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current) {
+    
     /* Wyzwolenie konwersji */
     ADCCON3bits.GSWTRG = 1;
-
-    /* Czekanie, a? konwersja b?dzie uko?czona  */
-    while (ADCDSTAT1bits.ARDY1 == 0);
-
-    /* pobranie wyniku */
-    (*out_result) = ADCDATA1;
     
+    /* ADC 1 (Vbat) */
+    while (ADCDSTAT1bits.ARDY1 == 0); // Czekanie, az konwersja bedzie ukonczona
+    (*out_result_Vbat) = ADCDATA1;       // pobranie wyniku
+    
+    /* ADC 2 (Current_Sense) */
+    while (ADCDSTAT1bits.ARDY2 == 0);
+    (*out_result_Current) = ADCDATA2; 
 }   
