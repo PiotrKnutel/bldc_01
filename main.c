@@ -57,6 +57,7 @@ int main() {
     static unsigned char x= 0;
     unsigned int wynik_ADC_Vbat= 0;
     unsigned int wynik_ADC_Current = 0;
+    unsigned int flaga_skip_start = 0;
     
     ANSELA = 0;
     ANSELB = 0;
@@ -100,11 +101,27 @@ int main() {
     OC5RS = 0x001E;         //Wspólczynik wypelnienia 50%
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
+    // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
     
     /* SKIP=0 przez pierwsze  333 ns dzi?ania PWM, 
      * pó?niej SKIP=1, przetwornica w trybie FCCM */
-    while (TMR2<=0x000A);
-    LATBbits.LATB13 = 1;
+    
+    // W ten sposób przetwornica nie dzia?a
+    //while (TMR2<=0x000A);
+    //LATBbits.LATB13 = 1;
+    
+    // W ten sposób prztwornica dzia?a 
+    while(!flaga_skip_start)
+    {
+        if (TMR2==0x000A) {
+            flaga_skip_start = 1;
+        }
+        if (flaga_skip_start) {
+            LATBbits.LATB13 = 1;
+        }            
+    }
+    
+    // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - KONIEC
     
     ADC_init();
     
