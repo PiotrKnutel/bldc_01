@@ -98,7 +98,7 @@ int main() {
     /* OC5 jako PWM */
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
-    OC5RS = 0x001E;         //Wspólczynik wypelnienia 50%
+    OC5RS = 0x0008;         //Wspólczynik wypelnienia 
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
@@ -113,7 +113,7 @@ int main() {
     // W ten sposób prztwornica dzia?a 
     while(!flaga_skip_start)
     {
-        if (TMR2==0x000A) {
+        if (TMR2==0x0005) {
             flaga_skip_start = 1;
         }
         if (flaga_skip_start) {
