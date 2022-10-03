@@ -51,12 +51,23 @@
 typedef unsigned char uchar_t;
 unsigned int Adcresult[100];
 unsigned int AdcresultCurrent[100];
+unsigned int CheckVbldc[100];
+
+
+unsigned int ISO_check_Vbldc(unsigned int *out_check_Vbldc) 
+{
+    (*out_check_Vbldc)= 0;
+    if (PORTBbits.RB12)
+        (*out_check_Vbldc)= 1;
+}
+
 
 int main() {
     
     static unsigned char x= 0;
     unsigned int wynik_ADC_Vbat= 0;
     unsigned int wynik_ADC_Current = 0;
+    unsigned int wynik_check_Vbldc = 0;
     unsigned int flaga_skip_start = 0;
     
     ANSELA = 0;
@@ -74,6 +85,7 @@ int main() {
     TRISGbits.TRISG8 = 1;   // pierwotnie C1TX1, aktulanie UART1 RX (zielony)
     TRISBbits.TRISB13 = 0;  // SKIP
     TRISAbits.TRISA7 = 0;   // OC5 (PWM), pierowtnie A10
+    TRISBbits.TRISB12 = 1;  // ISO_CHECK_V_BLDC
     
     //LATGbits.LATG6 = 0;     
     //LATGbits.LATG8 = 1;     
@@ -85,8 +97,7 @@ int main() {
     RPG6R = 0b00001;        // powi?zanie UART1 TX z pinem G6 (U1TX)
     
     UART_Init();
-    
-    
+        
     /* TIMER 2 do PWM */
     T2CONbits.ON = 0;       //W czasie konfiguracji timer musi byc wylaczony
     TMR2 = 0x0000;
@@ -98,7 +109,7 @@ int main() {
     /* OC5 jako PWM */
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
-    OC5RS = 0x000A;         //Wspólczynik wypelnienia 
+    OC5RS = 0x0028;         //Wspólczynik wypelnienia 
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
@@ -131,6 +142,8 @@ int main() {
 //        printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
         Adcresult[x]= wynik_ADC_Vbat;
         AdcresultCurrent[x]= wynik_ADC_Current;
+        ISO_check_Vbldc(&wynik_check_Vbldc);
+        CheckVbldc[x]= wynik_check_Vbldc;
         x++;
         if(x==100)
             x= 0;
