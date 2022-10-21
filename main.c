@@ -89,6 +89,10 @@ int main() {
     TRISFbits.TRISF0 = 0;   // ISO_U_PMOS_H
     TRISBbits.TRISB10 = 0;  // ISO_V_PMOS_H
     TRISBbits.TRISB11 = 0;  // ISO_W_PMOS_H
+    TRISCbits.TRISC8 = 0;   // U_NMOS_L
+    TRISCbits.TRISC6 = 0;   // V_NMOS_L
+    TRISCbits.TRISC7 = 0;   // W_NMOS_L
+
     
     //LATGbits.LATG6 = 0;     
     //LATGbits.LATG8 = 1;     
@@ -112,7 +116,7 @@ int main() {
     /* OC5 jako PWM */
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
-    OC5RS = 0x0008;         //Wspólczynik wypelnienia 
+    OC5RS = 0x001E;         //Wspólczynik wypelnienia 
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
@@ -141,9 +145,13 @@ int main() {
     
     
     // TEST WYJSC DO KOMUTACJI - START
-    LATFbits.LATF0 = 0;
-    LATBbits.LATB10 = 0;
-    LATBbits.LATB11 = 0;
+    LATFbits.LATF0 = 0;     // U_PMOS
+    LATBbits.LATB10 = 1;    // V_PMOS
+    LATBbits.LATB11 = 1;    // W_PMOS
+    
+    LATCbits.LATC8 = 0;     // U_NMOS
+    LATCbits.LATC6 = 1;     // V_NMOS
+    LATCbits.LATC7 = 0;     // W_NMOS
     //TEST WYJSC DO KOMUTACJI - KONIEC
     
     
