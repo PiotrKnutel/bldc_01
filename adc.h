@@ -6,7 +6,8 @@
 #include <stdlib.h>
 
 void ADC_init(void);
-void ADC_meas(unsigned int*, unsigned int*);
+void ADC_meas(unsigned int*, unsigned int*, unsigned int*, unsigned int*,
+        unsigned int*, unsigned int*);
 
 #endif	/* ADC_H */
 

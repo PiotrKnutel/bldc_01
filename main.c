@@ -52,7 +52,10 @@ typedef unsigned char uchar_t;
 unsigned int Adcresult[100];
 unsigned int AdcresultCurrent[100];
 unsigned int CheckVbldc[100];
-
+unsigned int AdcresultW[100];
+unsigned int AdcresultV[100];
+unsigned int AdcresultU[100];
+unsigned int AdcresultVbldc[100];
 
 unsigned int ISO_check_Vbldc(unsigned int *out_check_Vbldc) 
 {
@@ -68,6 +71,11 @@ int main() {
     unsigned int wynik_ADC_Vbat= 0;
     unsigned int wynik_ADC_Current = 0;
     unsigned int wynik_check_Vbldc = 0;
+    unsigned int wynik_ADC_W = 0;
+    unsigned int wynik_ADC_V = 0;
+    unsigned int wynik_ADC_U = 0;
+    unsigned int wynik_ADC_Vbldc = 0;
+    
     unsigned int flaga_skip_start = 0;
     
     ANSELA = 0;
@@ -76,8 +84,11 @@ int main() {
     ANSELE = 0;
     ANSELG = 0;
     ANSELAbits.ANSA1 = 1;   // A1 jako wej analogowe (VBAT_ADC)
-    ANSELBbits.ANSB0 = 1;   // B0 jako wej analogowe (Current_Sense_ADC) 
-    
+    ANSELBbits.ANSB0 = 1;   // B0 jako wej analogowe (Current_Sense_ADC)
+    ANSELAbits.ANSA8 = 1;   // A8 jako wej analogowe (Wsens_ADC)
+    ANSELCbits.ANSC1 = 1;   // C1 jako wej analogowe (Usens_ADC)
+    ANSELAbits.ANSA4 = 1;   // A4 jako wej analogowe (Vsens_ADC)
+    ANSELBbits.ANSB7 = 1;   // B7 jako wej analogowe (VBLDCsens_ADC)    
     
     RPA7Rbits.RPA7R = 0b00110; //Pin C2RX_2 skonfigurowany jako wyjscie OC5
     
@@ -145,22 +156,27 @@ int main() {
     
     
     // TEST WYJSC DO KOMUTACJI - START
-    LATFbits.LATF0 = 0;     // U_PMOS
-    LATBbits.LATB10 = 1;    // V_PMOS
+    LATFbits.LATF0 = 1;     // U_PMOS
+    LATBbits.LATB10 = 0;    // V_PMOS
     LATBbits.LATB11 = 1;    // W_PMOS
     
-    LATCbits.LATC8 = 0;     // U_NMOS
-    LATCbits.LATC6 = 1;     // V_NMOS
+    LATCbits.LATC8 = 1;     // U_NMOS
+    LATCbits.LATC6 = 0;     // V_NMOS
     LATCbits.LATC7 = 0;     // W_NMOS
     //TEST WYJSC DO KOMUTACJI - KONIEC
     
     
     while(1)
     {
-        ADC_meas(&wynik_ADC_Vbat, &wynik_ADC_Current);
+        ADC_meas(&wynik_ADC_Vbat, &wynik_ADC_Current, &wynik_ADC_W, &wynik_ADC_V, &wynik_ADC_U, &wynik_ADC_Vbldc);
 //        printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
         Adcresult[x]= wynik_ADC_Vbat;
         AdcresultCurrent[x]= wynik_ADC_Current;
+        AdcresultW[x]= wynik_ADC_W;
+        AdcresultV[x]= wynik_ADC_V;
+        AdcresultU[x]= wynik_ADC_U;
+        AdcresultVbldc[x]= wynik_ADC_Vbldc;
+        
         ISO_check_Vbldc(&wynik_check_Vbldc);
         CheckVbldc[x]= wynik_check_Vbldc;
         x++;
