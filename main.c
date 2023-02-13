@@ -64,6 +64,7 @@ unsigned int ISO_check_Vbldc(unsigned int *out_check_Vbldc)
         (*out_check_Vbldc)= 1;
 }
 
+
 // PROWIZORYCZNY WYBOR ZASILANIA CEWEK / REZYSTOROW ODBIORNIKA
 void test_faz(int stan) {
     switch (stan) {
@@ -160,24 +161,17 @@ int main() {
     TMR2 = 0x0000;
     PR2 = 0x003C;           //Wartosc przy ktorej timer sie przepelnia
     T2CONbits.TCKPS = 0b001; //Prescaler 2, gen 10MHz, uC 120MHz, magistrala 60MHz, licznik 30MHz
-    T2CONbits.TCS = 0; 
-    
-    /* TIMER 3 do za??cznia przetwornicy */
-    T3CONbits.ON = 0;
-    TMR3 = 0x0000;
-    PR3 = 0x003C;
-    T3CONbits.TCKPS = 0b001;
-    T3CONbits.TCS = 0;
+    T2CONbits.TCS = 0;
  
     /* OC5 jako PWM */
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
-    OC5RS = 0x0000;         //Wspólczynik wypelnienia
+    OC5RS = 0x0032;         //Wspólczynik wypelnienia
     
     /* Wlaczenie liczników i OC */
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
-    T3CONbits.ON = 1;
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
+    
     
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
     
@@ -191,7 +185,7 @@ int main() {
     // W ten sposób prztwornica dzia?a 
     while(!flaga_skip_start)
     {
-        if (TMR3==0x0005) {
+        if (TMR2==0x0005) {
             flaga_skip_start = 1;
         }
         if (flaga_skip_start) {
@@ -206,10 +200,10 @@ int main() {
     
     // TEST WYJSC DO KOMUTACJI - START
     LATFbits.LATF0 = 1;     // U_PMOS
-    LATBbits.LATB10 = 0;    // V_PMOS
+    LATBbits.LATB10 = 1;    // V_PMOS
     LATBbits.LATB11 = 1;    // W_PMOS
     
-    LATCbits.LATC8 = 1;     // U_NMOS
+    LATCbits.LATC8 = 0;     // U_NMOS
     LATCbits.LATC6 = 0;     // V_NMOS
     LATCbits.LATC7 = 0;     // W_NMOS
     //TEST WYJSC DO KOMUTACJI - KONIEC
@@ -235,7 +229,3 @@ int main() {
     }
     return (EXIT_SUCCESS);
 }
-
-
-
-
