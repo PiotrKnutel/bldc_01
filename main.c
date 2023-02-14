@@ -105,6 +105,33 @@ void test_faz(int stan) {
     //TEST WYJSC DO KOMUTACJI - KONIEC
 }
 
+void komutacja()
+{
+    
+}
+
+void __attribute__((vector(_TIMER_3_VECTOR), interrupt(ipl3soft), nomips16)) timer3_handler(){
+	IFS0bits.T3IF = 0;	// Clear interrupt flag for timer 2
+    komutacja();
+}
+
+void timer3_interrupt_init(int frequency)
+{
+    T3CON = 0x0;                // Disable timer 2 when setting it up
+    TMR3 = 0;                   // Set timer 2 counter to 0
+    PR3 = SYS_FREQ/8/2/frequency;
+
+    T3CONbits.TCKPS = 0b011;    // Pre-scale of 8
+ 	IEC0bits.T3IE = 0;          // Disable Timer 3 Interrupt
+ 	IFS0bits.T3IF = 0;          // Clear interrupt flag for timer 3
+    IPC3bits.T3IP = 3;          // Interrupt priority 3
+    IPC3bits.T3IS = 1;          // Sub-priority 1
+    IEC0bits.T3IE = 1;          // Enable Timer 3 Interrupt
+
+ 	T3CONbits.ON = 1;           // Module is enabled
+}
+
+
 int main() {
     
     static unsigned char x= 0;
@@ -172,6 +199,7 @@ int main() {
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
+    timer3_interrupt_init(10000);
     
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
     
