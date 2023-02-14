@@ -68,6 +68,14 @@ unsigned int ISO_check_Vbldc(unsigned int *out_check_Vbldc)
 // PROWIZORYCZNY WYBOR ZASILANIA CEWEK / REZYSTOROW ODBIORNIKA
 void test_faz(int stan) {
     switch (stan) {
+        case 0:
+            LATFbits.LATF0 = 1;     // U_PMOS
+            LATBbits.LATB10 = 1;    // V_PMOS
+            LATBbits.LATB11 = 1;    // W_PMOS
+
+            LATCbits.LATC8 = 0;     // U_NMOS
+            LATCbits.LATC6 = 0;     // V_NMOS
+            LATCbits.LATC7 = 0;     // W_NMOS
         case 1:
             LATFbits.LATF0 = 1;     // U_PMOS
             LATBbits.LATB10 = 0;    // V_PMOS
@@ -77,21 +85,21 @@ void test_faz(int stan) {
             LATCbits.LATC6 = 0;     // V_NMOS
             LATCbits.LATC7 = 0;     // W_NMOS
         case 2:
-            LATFbits.LATF0 = 0;     // U_PMOS
-            LATBbits.LATB10 = 1;    // V_PMOS
-            LATBbits.LATB11 = 1;    // W_PMOS
-    
-            LATCbits.LATC8 = 0;     // U_NMOS
-            LATCbits.LATC6 = 0;     // V_NMOS
-            LATCbits.LATC7 = 1;     // W_NMOS    
-        case 3:
             LATFbits.LATF0 = 1;     // U_PMOS
             LATBbits.LATB10 = 1;    // V_PMOS
             LATBbits.LATB11 = 0;    // W_PMOS
     
             LATCbits.LATC8 = 0;     // U_NMOS
             LATCbits.LATC6 = 1;     // V_NMOS
-            LATCbits.LATC7 = 0;     // W_NMOS    
+            LATCbits.LATC7 = 0;     // W_NMOS
+        case 3:
+            LATFbits.LATF0 = 0;     // U_PMOS
+            LATBbits.LATB10 = 1;    // V_PMOS
+            LATBbits.LATB11 = 1;    // W_PMOS
+    
+            LATCbits.LATC8 = 0;     // U_NMOS
+            LATCbits.LATC6 = 0;     // V_NMOS
+            LATCbits.LATC7 = 1;     // W_NMOS 
     }
     
     // TEST WYJSC DO KOMUTACJI - START
@@ -107,11 +115,15 @@ void test_faz(int stan) {
 
 void komutacja()
 {
-    
+    static int stan = 0;
+    stan = ((!stan) ? 1 : 0);
+    test_faz(stan);
 }
 
-void __attribute__((vector(_TIMER_3_VECTOR), interrupt(ipl3soft), nomips16)) timer3_handler(){
-	IFS0bits.T3IF = 0;	// Clear interrupt flag for timer 2
+void __attribute__((vector(_TIMER_3_VECTOR), interrupt(ipl3soft), nomips16)) 
+timer3_handler()
+{
+	IFS0bits.T3IF = 0;	// Clear interrupt flag for timer 3
     komutacja();
 }
 
@@ -119,7 +131,7 @@ void timer3_interrupt_init(int frequency)
 {
     T3CON = 0x0;                // Disable timer 2 when setting it up
     TMR3 = 0;                   // Set timer 2 counter to 0
-    PR3 = SYS_FREQ/8/2/frequency;
+    PR3 = SYS_FREQ/8/frequency;
 
     T3CONbits.TCKPS = 0b011;    // Pre-scale of 8
  	IEC0bits.T3IE = 0;          // Disable Timer 3 Interrupt
@@ -199,7 +211,6 @@ int main() {
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
-    timer3_interrupt_init(10000);
     
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
     
@@ -236,6 +247,7 @@ int main() {
     LATCbits.LATC7 = 0;     // W_NMOS
     //TEST WYJSC DO KOMUTACJI - KONIEC
     
+    timer3_interrupt_init(1000);        //przerwanie z f = 1 kHz
     
     while(1)
     {
