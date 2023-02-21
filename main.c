@@ -36,7 +36,6 @@
 #pragma config UPLLEN =     OFF
 //#pragma config UPLLFSEL =	FREQ_12MHZ
 
-
 #pragma config FDMTEN = OFF
 #pragma config WDTSPGM = STOP
 #pragma config DMTCNT = DMT31
@@ -57,6 +56,8 @@ unsigned int AdcresultV[100];
 unsigned int AdcresultU[100];
 unsigned int AdcresultVbldc[100];
 
+static int stan = 0;
+
 unsigned int ISO_check_Vbldc(unsigned int *out_check_Vbldc) 
 {
     (*out_check_Vbldc)= 0;
@@ -76,7 +77,35 @@ void test_faz(int stan) {
             LATCbits.LATC8 = 0;     // U_NMOS
             LATCbits.LATC6 = 0;     // V_NMOS
             LATCbits.LATC7 = 0;     // W_NMOS
+            break;
         case 1:
+            LATFbits.LATF0 = 0;     // U_PMOS
+            LATBbits.LATB10 = 1;    // V_PMOS
+            LATBbits.LATB11 = 1;    // W_PMOS
+    
+            LATCbits.LATC8 = 0;     // U_NMOS
+            LATCbits.LATC6 = 1;     // V_NMOS
+            LATCbits.LATC7 = 0;     // W_NMOS
+            break;
+        case 2:
+            LATFbits.LATF0 = 0;     // U_PMOS
+            LATBbits.LATB10 = 1;    // V_PMOS
+            LATBbits.LATB11 = 1;    // W_PMOS
+    
+            LATCbits.LATC8 = 0;     // U_NMOS
+            LATCbits.LATC6 = 0;     // V_NMOS
+            LATCbits.LATC7 = 1;     // W_NMOS
+            break;
+        case 3:
+            LATFbits.LATF0 = 1;     // U_PMOS
+            LATBbits.LATB10 = 0;    // V_PMOS
+            LATBbits.LATB11 = 1;    // W_PMOS
+    
+            LATCbits.LATC8 = 0;     // U_NMOS
+            LATCbits.LATC6 = 0;     // V_NMOS
+            LATCbits.LATC7 = 1;     // W_NMOS
+            break;
+        case 4:
             LATFbits.LATF0 = 1;     // U_PMOS
             LATBbits.LATB10 = 0;    // V_PMOS
             LATBbits.LATB11 = 1;    // W_PMOS
@@ -84,7 +113,17 @@ void test_faz(int stan) {
             LATCbits.LATC8 = 1;     // U_NMOS
             LATCbits.LATC6 = 0;     // V_NMOS
             LATCbits.LATC7 = 0;     // W_NMOS
-        case 2:
+            break;
+        case 5:
+            LATFbits.LATF0 = 1;     // U_PMOS
+            LATBbits.LATB10 = 1;    // V_PMOS
+            LATBbits.LATB11 = 0;    // W_PMOS
+    
+            LATCbits.LATC8 = 1;     // U_NMOS
+            LATCbits.LATC6 = 0;     // V_NMOS
+            LATCbits.LATC7 = 0;     // W_NMOS
+            break;
+        case 6:
             LATFbits.LATF0 = 1;     // U_PMOS
             LATBbits.LATB10 = 1;    // V_PMOS
             LATBbits.LATB11 = 0;    // W_PMOS
@@ -92,31 +131,27 @@ void test_faz(int stan) {
             LATCbits.LATC8 = 0;     // U_NMOS
             LATCbits.LATC6 = 1;     // V_NMOS
             LATCbits.LATC7 = 0;     // W_NMOS
-        case 3:
-            LATFbits.LATF0 = 0;     // U_PMOS
+            break;
+        default:
+            LATFbits.LATF0 = 1;     // U_PMOS
             LATBbits.LATB10 = 1;    // V_PMOS
             LATBbits.LATB11 = 1;    // W_PMOS
     
             LATCbits.LATC8 = 0;     // U_NMOS
             LATCbits.LATC6 = 0;     // V_NMOS
-            LATCbits.LATC7 = 1;     // W_NMOS 
+            LATCbits.LATC7 = 0;     // W_NMOS
+            break;            
     }
-    
-    // TEST WYJSC DO KOMUTACJI - START
-    LATFbits.LATF0 = 1;     // U_PMOS
-    LATBbits.LATB10 = 0;    // V_PMOS
-    LATBbits.LATB11 = 1;    // W_PMOS
-    
-    LATCbits.LATC8 = 1;     // U_NMOS
-    LATCbits.LATC6 = 0;     // V_NMOS
-    LATCbits.LATC7 = 0;     // W_NMOS
-    //TEST WYJSC DO KOMUTACJI - KONIEC
 }
 
 void komutacja()
 {
-    static int stan = 0;
-    stan = ((!stan) ? 1 : 0);
+    
+    //stan = ((!stan) ? 2 : 0);
+    //if (stan==0) stan=2; else stan=0;
+    stan++;
+    if (stan==7)
+        stan=1;
     test_faz(stan);
 }
 
@@ -129,17 +164,19 @@ timer3_handler()
 
 void timer3_interrupt_init(int frequency)
 {
-    T3CON = 0x0;                // Disable timer 2 when setting it up
-    TMR3 = 0;                   // Set timer 2 counter to 0
-    PR3 = SYS_FREQ/8/frequency;
+    T3CON = 0x0;                // Disable timer 3 when setting it up
+    TMR3 = 0;                   // Set timer 3 counter to 0
+    PR3 = SYS_FREQ/8/12/frequency;
 
     T3CONbits.TCKPS = 0b011;    // Pre-scale of 8
+    T3CONbits.TCS = 0;          // Internal clock
  	IEC0bits.T3IE = 0;          // Disable Timer 3 Interrupt
  	IFS0bits.T3IF = 0;          // Clear interrupt flag for timer 3
     IPC3bits.T3IP = 3;          // Interrupt priority 3
     IPC3bits.T3IS = 1;          // Sub-priority 1
     IEC0bits.T3IE = 1;          // Enable Timer 3 Interrupt
 
+    asm volatile("ei");
  	T3CONbits.ON = 1;           // Module is enabled
 }
 
@@ -205,7 +242,7 @@ int main() {
     /* OC5 jako PWM */
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
-    OC5RS = 0x0032;         //Wspólczynik wypelnienia
+    OC5RS = 0x001E;         //Wspólczynik wypelnienia
     
     /* Wlaczenie liczników i OC */
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
@@ -221,7 +258,8 @@ int main() {
     //while (TMR2<=0x000A);
     //LATBbits.LATB13 = 1;
     
-    // W ten sposób prztwornica dzia?a 
+    // W ten sposób prztwornica dzia?a
+    
     while(!flaga_skip_start)
     {
         if (TMR2==0x0005) {
@@ -247,7 +285,8 @@ int main() {
     LATCbits.LATC7 = 0;     // W_NMOS
     //TEST WYJSC DO KOMUTACJI - KONIEC
     
-    timer3_interrupt_init(1000);        //przerwanie z f = 1 kHz
+    timer3_interrupt_init(100);        //przerwanie z f = x Hz
+    //test_faz(0);
     
     while(1)
     {
