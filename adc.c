@@ -172,11 +172,12 @@ void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
     // ADCCON3bits.GLSWTRG = 1; // wyzw poziomem, bez powrotu do 0 // przecie? to nie potrzebne jak wyzwala si? timerem
 
     while (ADCDSTAT1bits.ARDY0 == 0);   // Czekanie, az konwersja bedzie ukonczona
-    while (ADCDSTAT1bits.ARDY1 == 0);
+    /*while (ADCDSTAT1bits.ARDY1 == 0); // nie potrzebne, bo powinnny si? sko?czy? wtym samym czasie, TRZEBA TO SPRAWDZI? !!!
     while (ADCDSTAT1bits.ARDY2 == 0);
     while (ADCDSTAT1bits.ARDY3 == 0);
     while (ADCDSTAT1bits.ARDY4 == 0);
     while (ADCDSTAT1bits.ARDY5 == 0);
+    */
     
     (*out_result_Vbat) = ADCDATA4;      // pobranie wyniku
     (*out_result_Current) = ADCDATA2;
