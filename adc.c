@@ -169,7 +169,7 @@ void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
         unsigned int *out_result_Usens, unsigned int *out_result_Vbldc) {
 
     /* Wyzwolenie konwersji */
-    ADCCON3bits.GLSWTRG = 1; // wyzw poziomem, bez powrotu do 0
+    // ADCCON3bits.GLSWTRG = 1; // wyzw poziomem, bez powrotu do 0 // przecie? to nie potrzebne jak wyzwala si? timerem
 
     while (ADCDSTAT1bits.ARDY0 == 0);   // Czekanie, az konwersja bedzie ukonczona
     while (ADCDSTAT1bits.ARDY1 == 0);
