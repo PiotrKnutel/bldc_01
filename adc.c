@@ -2,6 +2,7 @@
 
 #include <xc.h>
 #include "adc.h"
+#include "uart.h"
 #include "p32mk1024mcf064.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,22 +88,31 @@ void ADC_init() {
     ADCFLTR3 = 0;
     ADCFLTR4 = 0;
     
-    /* Ustawienie zródla wyzwalania (trigger) */
-    ADCTRGSNSbits.LVL0 = 0;         // 0 = ADC1 wyzwalany zboczem
-    ADCTRGSNSbits.LVL1 = 0;
-    ADCTRGSNSbits.LVL2 = 0;
-    ADCTRGSNSbits.LVL3 = 0;
-    ADCTRGSNSbits.LVL4 = 0;
-    ADCTRGSNSbits.LVL5 = 0;
+    /* Ustawienie zródla i sposobu wyzwalania (trigger) */
+    /* 0 to wyzwalanie zboczem, 1 - stanem wysokim. 
+       Wyzwlanie zboczem mo?e spowodowa? opó?nienie do 2*Tad. */ 
+    ADCTRGSNSbits.LVL0 = 1;    // ADC0
+    ADCTRGSNSbits.LVL1 = 1;    // ADC1
+    ADCTRGSNSbits.LVL2 = 1;    // ADC2
+    ADCTRGSNSbits.LVL3 = 1;    // ADC3
+    ADCTRGSNSbits.LVL4 = 1;    // ADC4
+    ADCTRGSNSbits.LVL5 = 1;    // ADC5
     
-    ADCTRG1bits.TRGSRC0 = 1;
-    ADCTRG1bits.TRGSRC1 = 1;        // wybór ?ród?a wyzwalania (trigger) dla AN1, 
-        /* 0=brak wyzwalania, 0b10000=koniec okresu OC1, 1=zbocze z software'u */
-        /* dla ADC Klasy 1 trigger powoduje przerwanie próbkowania i rozpocz?cie konwersji */
-    ADCTRG1bits.TRGSRC2 = 1;
-    ADCTRG1bits.TRGSRC3 = 1;
-    ADCTRG2bits.TRGSRC4 = 1;
-    ADCTRG2bits.TRGSRC5 = 1;
+    /*
+    ADCTRGSNSbits.LVL24 = 1;    // ADC0
+    ADCTRGSNSbits.LVL7  = 1;    // ADC1
+    ADCTRGSNSbits.LVL2  = 1;    // ADC2
+    ADCTRGSNSbits.LVL26 = 1;    // ADC3
+    ADCTRGSNSbits.LVL1  = 1;    // ADC4
+    ADCTRGSNSbits.LVL25 = 1;    // ADC5
+     */
+    
+    ADCTRG1bits.TRGSRC0 = 2;
+    ADCTRG1bits.TRGSRC1 = 2;
+    ADCTRG1bits.TRGSRC2 = 2;
+    ADCTRG1bits.TRGSRC3 = 2;
+    ADCTRG2bits.TRGSRC4 = 2;
+    ADCTRG2bits.TRGSRC5 = 2;
     
     /* Wczesne przerwania */
     ADCEIEN1 = 0;                   // 0 = brak wczesnych przertwa?
@@ -145,7 +155,7 @@ void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
         unsigned int *out_result_Usens, unsigned int *out_result_Vbldc) {
 
     /* Wyzwolenie konwersji */
-    ADCCON3bits.GSWTRG = 1;
+    ADCCON3bits.GLSWTRG = 1; // wyzw poziomem, bez powrotu do 0
 
     while (ADCDSTAT1bits.ARDY0 == 0);   // Czekanie, az konwersja bedzie ukonczona
     while (ADCDSTAT1bits.ARDY1 == 0);
@@ -154,6 +164,8 @@ void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
     while (ADCDSTAT1bits.ARDY4 == 0);
     while (ADCDSTAT1bits.ARDY5 == 0);
 
+    printf("ok ");
+    
     (*out_result_Vbat) = ADCDATA4;      // pobranie wyniku
     (*out_result_Current) = ADCDATA2;
     (*out_result_Wsens) = ADCDATA3;

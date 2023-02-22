@@ -288,10 +288,12 @@ int main() {
     timer3_interrupt_init(100);        //przerwanie z f = x Hz
     //test_faz(0);
     
+    printf("Start programu. \n");
+    
     while(1)
     {
         ADC_meas(&wynik_ADC_Vbat, &wynik_ADC_Current, &wynik_ADC_W, &wynik_ADC_V, &wynik_ADC_U, &wynik_ADC_Vbldc);
-//        printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
+        //printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
         Adcresult[x]= wynik_ADC_Vbat;
         AdcresultCurrent[x]= wynik_ADC_Current;
         AdcresultW[x]= wynik_ADC_W;
@@ -302,8 +304,12 @@ int main() {
         ISO_check_Vbldc(&wynik_check_Vbldc);
         CheckVbldc[x]= wynik_check_Vbldc;
         x++;
+        delay_ms(100);
         if(x==100)
+        {
             x= 0;
+            printf("a");
+        }
 //        delay_ms(1000);
     }
     return (EXIT_SUCCESS);
