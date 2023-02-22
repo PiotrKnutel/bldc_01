@@ -248,7 +248,7 @@ int main() {
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
     OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
-    
+            
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
     
     /* SKIP=0 przez pierwsze  333 ns dzi?ania PWM, 
@@ -272,8 +272,8 @@ int main() {
     
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - KONIEC
     
-    ADC_init();
     
+    ADC_init();
     
     // TEST WYJSC DO KOMUTACJI - START
     LATFbits.LATF0 = 1;     // U_PMOS
@@ -308,7 +308,6 @@ int main() {
         if(x==100)
         {
             x= 0;
-            printf("a");
         }
 //        delay_ms(1000);
     }

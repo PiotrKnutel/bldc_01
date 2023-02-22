@@ -7,7 +7,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ADC_init() {
+void ADC_init() 
+{
+    /* TIMER 1 do wyzwalania ADC */
+    unsigned int takt_magistrali = 60000000;  // 60 MHz
+    unsigned int f_tmr1 = 10000; // 10 kHz
+    T1CONbits.ON = 0;
+    TMR1 = 0;
+    PR1 = takt_magistrali/256/f_tmr1 - 1;
+    T1CONbits.TCKPS = 0b11; // prescaler 256
+    T1CONbits.TCS = 0;
+    
+    
     /* ADC AN 1 */
     /* Procedura z noty, poczawszy od str. 371 
      * i z "reference manual" section 22 (w tym przyk??d 22-1 str. 66). */
@@ -107,12 +118,12 @@ void ADC_init() {
     ADCTRGSNSbits.LVL25 = 1;    // ADC5
      */
     
-    ADCTRG1bits.TRGSRC0 = 2;
-    ADCTRG1bits.TRGSRC1 = 2;
-    ADCTRG1bits.TRGSRC2 = 2;
-    ADCTRG1bits.TRGSRC3 = 2;
-    ADCTRG2bits.TRGSRC4 = 2;
-    ADCTRG2bits.TRGSRC5 = 2;
+    ADCTRG1bits.TRGSRC0 = 5;    // 5 to TMR1
+    ADCTRG1bits.TRGSRC1 = 5;
+    ADCTRG1bits.TRGSRC2 = 5;
+    ADCTRG1bits.TRGSRC3 = 5;
+    ADCTRG2bits.TRGSRC4 = 5;
+    ADCTRG2bits.TRGSRC5 = 5;
     
     /* Wczesne przerwania */
     ADCEIEN1 = 0;                   // 0 = brak wczesnych przertwa?
@@ -148,6 +159,9 @@ void ADC_init() {
     ADCCON3bits.DIGEN3 = 1;
     ADCCON3bits.DIGEN4 = 1;
     ADCCON3bits.DIGEN5 = 1;
+    
+    /*Wlaczenie TIMERA 1 */
+    T1CONbits.ON = 1;
 }
     
 void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
@@ -163,8 +177,6 @@ void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
     while (ADCDSTAT1bits.ARDY3 == 0);
     while (ADCDSTAT1bits.ARDY4 == 0);
     while (ADCDSTAT1bits.ARDY5 == 0);
-
-    printf("ok ");
     
     (*out_result_Vbat) = ADCDATA4;      // pobranie wyniku
     (*out_result_Current) = ADCDATA2;
