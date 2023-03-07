@@ -159,16 +159,21 @@ void __attribute__((vector(_TIMER_3_VECTOR), interrupt(ipl3soft), nomips16))
 timer3_handler()
 {
 	IFS0bits.T3IF = 0;	// Clear interrupt flag for timer 3
-    komutacja();
+    //komutacja();
+    if(LATAbits.LATA10 == 0){
+        LATAbits.LATA10 = 1;
+    }else
+          LATAbits.LATA10 = 0;
 }
 
 void timer3_interrupt_init(int frequency)
 {
     T3CON = 0x0;                // Disable timer 3 when setting it up
     TMR3 = 0;                   // Set timer 3 counter to 0
-    PR3 = SYS_FREQ/8/12/frequency;
+    // do komutacji trzeba jeszcze podzielic przez /12
+    PR3 = 600;
 
-    T3CONbits.TCKPS = 0b011;    // Pre-scale of 8
+    T3CONbits.TCKPS = 0b001;    // Pre-scale of 2
     T3CONbits.TCS = 0;          // Internal clock
  	IEC0bits.T3IE = 0;          // Disable Timer 3 Interrupt
  	IFS0bits.T3IF = 0;          // Clear interrupt flag for timer 3
@@ -199,19 +204,23 @@ int main() {
     ANSELC = 0;
     ANSELE = 0;
     ANSELG = 0;
+    /*
     ANSELAbits.ANSA1 = 1;   // A1 jako wej analogowe (VBAT_ADC)
     ANSELBbits.ANSB0 = 1;   // B0 jako wej analogowe (Current_Sense_ADC)
     ANSELAbits.ANSA8 = 1;   // A8 jako wej analogowe (Wsens_ADC)
     ANSELCbits.ANSC1 = 1;   // C1 jako wej analogowe (Usens_ADC)
     ANSELAbits.ANSA4 = 1;   // A4 jako wej analogowe (Vsens_ADC)
     ANSELBbits.ANSB7 = 1;   // B7 jako wej analogowe (VBLDCsens_ADC)    
-    
+    */
     RPA7Rbits.RPA7R = 0b00110; //Pin C2RX_2 skonfigurowany jako wyjscie OC5
-    
+    /*
     TRISGbits.TRISG6 = 0;   // pierwotnie C1RX1, aktualnie UART1 TX (niebiski)
     TRISGbits.TRISG8 = 1;   // pierwotnie C1TX1, aktulanie UART1 RX (zielony)
+    */ 
     TRISBbits.TRISB13 = 0;  // SKIP
-    TRISAbits.TRISA7 = 0;   // OC5 (PWM), pierowtnie A10
+    TRISAbits.TRISA7 = 0;  // PWM
+    TRISAbits.TRISA10 = 0;  // PWM
+    /*
     TRISBbits.TRISB12 = 1;  // ISO_CHECK_V_BLDC
     TRISFbits.TRISF0 = 0;   // ISO_U_PMOS_H
     TRISBbits.TRISB10 = 0;  // ISO_V_PMOS_H
@@ -219,18 +228,19 @@ int main() {
     TRISCbits.TRISC8 = 0;   // U_NMOS_L
     TRISCbits.TRISC6 = 0;   // V_NMOS_L
     TRISCbits.TRISC7 = 0;   // W_NMOS_L
-
+    */
     
     //LATGbits.LATG6 = 0;     
     //LATGbits.LATG8 = 1;     
     LATBbits.LATB13 = 0;    // SKIP
-    //LATAbits.LATA7 = 0;   // PWM
+    LATAbits.LATA7 = 0;   // PWM
+    LATAbits.LATA10 = 0;
     
     /* UART 1 */
-    U1RXR = 0b1010;         // powi?zanie UART1 RX z pinem G8 (RPG8)
-    RPG6R = 0b00001;        // powi?zanie UART1 TX z pinem G6 (U1TX)
+    //U1RXR = 0b1010;         // powi?zanie UART1 RX z pinem G8 (RPG8)
+    //RPG6R = 0b00001;        // powi?zanie UART1 TX z pinem G6 (U1TX)
     
-    UART_Init();
+    //UART_Init();
         
     /* TIMER 2 do PWM */
     T2CONbits.ON = 0;       //W czasie konfiguracji timer musi byc wylaczony
@@ -273,25 +283,27 @@ int main() {
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - KONIEC
     
     
-    ADC_init();
+    //ADC_init();
     
     // TEST WYJSC DO KOMUTACJI - START
-    LATFbits.LATF0 = 1;     // U_PMOS
-    LATBbits.LATB10 = 1;    // V_PMOS
-    LATBbits.LATB11 = 1;    // W_PMOS
+    //LATFbits.LATF0 = 1;     // U_PMOS
+    //LATBbits.LATB10 = 1;    // V_PMOS
+    //LATBbits.LATB11 = 1;    // W_PMOS
     
-    LATCbits.LATC8 = 0;     // U_NMOS
-    LATCbits.LATC6 = 0;     // V_NMOS
-    LATCbits.LATC7 = 0;     // W_NMOS
+    //LATCbits.LATC8 = 0;     // U_NMOS
+    //LATCbits.LATC6 = 0;     // V_NMOS
+    //LATCbits.LATC7 = 0;     // W_NMOS
     //TEST WYJSC DO KOMUTACJI - KONIEC
     
-    timer3_interrupt_init(100);        //przerwanie z f = x Hz
+    timer3_interrupt_init(10000);        //przerwanie z f = x Hz
     //test_faz(0);
     
-    printf("Start programu. \n");
+    //printf("Start programu. \n");
     
     while(1)
     {
+/*      
+ *      LA
         ADC_meas(&wynik_ADC_Vbat, &wynik_ADC_Current, &wynik_ADC_W, &wynik_ADC_V, &wynik_ADC_U, &wynik_ADC_Vbldc);
         //printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
         Adcresult[x]= wynik_ADC_Vbat;
@@ -304,11 +316,12 @@ int main() {
         ISO_check_Vbldc(&wynik_check_Vbldc);
         CheckVbldc[x]= wynik_check_Vbldc;
         x++;
-        delay_ms(100);
+        delay_us(60);
         if(x==100)
         {
             x= 0;
         }
+ */
 //        delay_ms(1000);
     }
     return (EXIT_SUCCESS);
