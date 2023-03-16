@@ -185,6 +185,22 @@ void timer3_interrupt_init(int frequency)
  	T3CONbits.ON = 1;           // Module is enabled
 }
 
+void pwm_config()
+{
+    PTCONbits.PTEN = 0; //wylaczenie modu?u PWM
+    PTCONbits.PCLKDIV = 0b000; // prescaler pierwszy, 0 to 1/FSYSCLK
+    PTPER = 0x00F0;     // min. to 0x0008; 0x00F0=240; wzor 4 na str. 44-10.
+    
+    PWMCON4bits.MTBS = 0; //wybor zrodla zegara, 0 to Primary master time base
+    
+    IOCON4bits.PENH = 1; // modul PWM kontroluje pin PWM4H
+    IOCON4bits.PENL = 0; // GPIO kontroluje pin PWM4L
+    IOCON4bits.PMOD = 0b11; // PWM4L utrzywywane w stanie '0' (ale raczej nie potrzebne gdy PENL=0)
+    
+    PDC4bits.PDC = 0x0078; // PWM Genertaor Duty Cycle 0x0078=120 (po?owa 240)
+    
+    PTCONbits.PTEN = 1;
+}
 
 int main() {
     
@@ -211,29 +227,29 @@ int main() {
     ANSELCbits.ANSC1 = 1;   // C1 jako wej analogowe (Usens_ADC)
     ANSELAbits.ANSA4 = 1;   // A4 jako wej analogowe (Vsens_ADC)
     ANSELBbits.ANSB7 = 1;   // B7 jako wej analogowe (VBLDCsens_ADC)    
-    */
+    
     RPA7Rbits.RPA7R = 0b00110; //Pin C2RX_2 skonfigurowany jako wyjscie OC5
-    /*
+    
     TRISGbits.TRISG6 = 0;   // pierwotnie C1RX1, aktualnie UART1 TX (niebiski)
     TRISGbits.TRISG8 = 1;   // pierwotnie C1TX1, aktulanie UART1 RX (zielony)
     */ 
     TRISBbits.TRISB13 = 0;  // SKIP
-    TRISAbits.TRISA7 = 0;  // PWM
+    //TRISAbits.TRISA7 = 0;  // PWM
     TRISAbits.TRISA10 = 0;  // PWM
-    /*
-    TRISBbits.TRISB12 = 1;  // ISO_CHECK_V_BLDC
+    
+    //TRISBbits.TRISB12 = 1;  // ISO_CHECK_V_BLDC
     TRISFbits.TRISF0 = 0;   // ISO_U_PMOS_H
     TRISBbits.TRISB10 = 0;  // ISO_V_PMOS_H
     TRISBbits.TRISB11 = 0;  // ISO_W_PMOS_H
     TRISCbits.TRISC8 = 0;   // U_NMOS_L
     TRISCbits.TRISC6 = 0;   // V_NMOS_L
     TRISCbits.TRISC7 = 0;   // W_NMOS_L
-    */
+    
     
     //LATGbits.LATG6 = 0;     
     //LATGbits.LATG8 = 1;     
     LATBbits.LATB13 = 0;    // SKIP
-    LATAbits.LATA7 = 0;   // PWM
+    //LATAbits.LATA7 = 0;   // PWM
     LATAbits.LATA10 = 0;
     
     /* UART 1 */
@@ -241,7 +257,10 @@ int main() {
     //RPG6R = 0b00001;        // powi?zanie UART1 TX z pinem G6 (U1TX)
     
     //UART_Init();
-        
+    
+    // STAN NEUTRALNY WSZYSTKICH FAZ - PO URUCHOMIENIU
+    test_faz(0);
+    
     /* TIMER 2 do PWM */
     T2CONbits.ON = 0;       //W czasie konfiguracji timer musi byc wylaczony
     TMR2 = 0x0000;
@@ -250,13 +269,17 @@ int main() {
     T2CONbits.TCS = 0;
  
     /* OC5 jako PWM */
+    /*
     OC5CONbits.OCM = 0b110; //Tryb PWM
     OC5CONbits.OCTSEL = 0;  //Timer drugi jest ?ród?em zegara dla modulu output compare
     OC5RS = 0x001E;         //Wspólczynik wypelnienia
+    */
+    
+    pwm_config();
     
     /* Wlaczenie liczników i OC */
     T2CONbits.ON = 1;       //Timer zostaje wlaczony
-    OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
+    //OC5CONbits.ON = 1;      //Aktywaca modulu Output Compare
     
             
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - POCZATEK
@@ -286,16 +309,16 @@ int main() {
     //ADC_init();
     
     // TEST WYJSC DO KOMUTACJI - START
-    //LATFbits.LATF0 = 1;     // U_PMOS
-    //LATBbits.LATB10 = 1;    // V_PMOS
-    //LATBbits.LATB11 = 1;    // W_PMOS
+    LATFbits.LATF0 = 1;     // U_PMOS
+    LATBbits.LATB10 = 1;    // V_PMOS
+    LATBbits.LATB11 = 1;    // W_PMOS
     
-    //LATCbits.LATC8 = 0;     // U_NMOS
-    //LATCbits.LATC6 = 0;     // V_NMOS
-    //LATCbits.LATC7 = 0;     // W_NMOS
+    LATCbits.LATC8 = 0;     // U_NMOS
+    LATCbits.LATC6 = 0;     // V_NMOS
+    LATCbits.LATC7 = 0;     // W_NMOS
     //TEST WYJSC DO KOMUTACJI - KONIEC
     
-    timer3_interrupt_init(10000);        //przerwanie z f = x Hz
+    //timer3_interrupt_init(10000);        //przerwanie z f = x Hz
     //test_faz(0);
     
     //printf("Start programu. \n");
