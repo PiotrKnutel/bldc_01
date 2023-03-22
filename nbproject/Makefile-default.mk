@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c delay.c uart.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c delay.c uart.c pwm.c bridge.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/uart.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/bridge.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o
 
 # Source Files
-SOURCEFILES=main.c adc.c delay.c uart.c
+SOURCEFILES=main.c adc.c delay.c uart.c pwm.c bridge.c
 
 
 
@@ -131,6 +131,18 @@ ${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/7e15a6bc2597dc519929
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/pwm.o: pwm.c  .generated_files/flags/default/b35a14ba7eb70584e9ae6a90ff7e900146c03196 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pwm.o.d 
+	@${RM} ${OBJECTDIR}/pwm.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/pwm.o.d" -o ${OBJECTDIR}/pwm.o pwm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/bridge.o: bridge.c  .generated_files/flags/default/be45ae89b92bde49869081297669884dd68b7eb2 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/bridge.o.d 
+	@${RM} ${OBJECTDIR}/bridge.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/bridge.o.d" -o ${OBJECTDIR}/bridge.o bridge.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 else
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/25f5b2062fbc7405c960a37b8e9551e4bccdfb84 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
@@ -155,6 +167,18 @@ ${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/eb7319714e1623757387
 	@${RM} ${OBJECTDIR}/uart.o.d 
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/pwm.o: pwm.c  .generated_files/flags/default/7ada700514a7c7f17d2aebd3e424b4727145e1a8 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pwm.o.d 
+	@${RM} ${OBJECTDIR}/pwm.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/pwm.o.d" -o ${OBJECTDIR}/pwm.o pwm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/bridge.o: bridge.c  .generated_files/flags/default/6cf18aa531e65fe69084ad0cae9c21d76c4681d1 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/bridge.o.d 
+	@${RM} ${OBJECTDIR}/bridge.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/bridge.o.d" -o ${OBJECTDIR}/bridge.o bridge.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 
