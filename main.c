@@ -188,16 +188,34 @@ void timer3_interrupt_init(int frequency)
 void pwm_config()
 {
     PTCONbits.PTEN = 0; //wylaczenie modu?u PWM
-    PTCONbits.PCLKDIV = 0b000; // prescaler pierwszy, 0 to 1/FSYSCLK
-    PTPER = 0x00F0;     // min. to 0x0008; 0x00F0=240; wzor 4 na str. 44-10.
     
+    PMD4bits.PWM1MD = 1;
+    PMD4bits.PWM2MD = 1;
+    PMD4bits.PWM3MD = 1;
+    PMD4bits.PWM5MD = 1;
+    PMD4bits.PWM6MD = 1;
+    PMD4bits.PWM7MD = 1;
+    PMD4bits.PWM8MD = 1;
+    PMD4bits.PWM9MD = 1;
+    PMD4bits.PWM10MD = 1;
+    PMD4bits.PWM11MD = 1;
+    PMD4bits.PWM12MD = 1;
+    
+    PTCONbits.PCLKDIV = 0b000; // prescaler pierwszy, 0 to 1/FSYSCLK
+    
+    // gdy ITB=1 to zamiast PTPER jest u?ywane PHASE.
+    //PTPER = 0x00F0;     // min. to 0x0008; 0x00F0=240; wzor 4 na str. 44-10.
     PWMCON4bits.MTBS = 0; //wybor zrodla zegara, 0 to Primary master time base
     
+    PWMCON4bits.ITB = 1; // Independent Time Base Mode
+    PWMCON4bits.DTC = 0b0010; //Dead time function is disabled
     IOCON4bits.PENH = 1; // modul PWM kontroluje pin PWM4H
-    IOCON4bits.PENL = 0; // GPIO kontroluje pin PWM4L
-    IOCON4bits.PMOD = 0b11; // PWM4L utrzywywane w stanie '0' (ale raczej nie potrzebne gdy PENL=0)
+    IOCON4bits.PENL = 1; // GPIO kontroluje pin PWM4L
+    IOCON4bits.PMOD = 0b0011; // PWM4L utrzywywane w stanie '0' (ale raczej nie potrzebne gdy PENL=0)
+    IOCON4bits.FLTMOD = 0b0011;   // wyl. wej. fault
     
-    PDC4bits.PDC = 0x0078; // PWM Genertaor Duty Cycle 0x0078=120 (po?owa 240)
+    PHASE4 = 0x00F0;
+    PDC4 = 0x0078; // PWM Genertaor Duty Cycle 0x0078=120 (po?owa 240)
     
     PTCONbits.PTEN = 1;
 }
@@ -207,7 +225,7 @@ int main() {
     static unsigned char x= 0;
     unsigned int wynik_ADC_Vbat= 0;
     unsigned int wynik_ADC_Current = 0;
-    unsigned int wynik_check_Vbldc = 0;
+    //unsigned int wynik_check_Vbldc = 0;
     unsigned int wynik_ADC_W = 0;
     unsigned int wynik_ADC_V = 0;
     unsigned int wynik_ADC_U = 0;
@@ -220,7 +238,7 @@ int main() {
     ANSELC = 0;
     ANSELE = 0;
     ANSELG = 0;
-    /*
+    
     ANSELAbits.ANSA1 = 1;   // A1 jako wej analogowe (VBAT_ADC)
     ANSELBbits.ANSB0 = 1;   // B0 jako wej analogowe (Current_Sense_ADC)
     ANSELAbits.ANSA8 = 1;   // A8 jako wej analogowe (Wsens_ADC)
@@ -228,14 +246,14 @@ int main() {
     ANSELAbits.ANSA4 = 1;   // A4 jako wej analogowe (Vsens_ADC)
     ANSELBbits.ANSB7 = 1;   // B7 jako wej analogowe (VBLDCsens_ADC)    
     
-    RPA7Rbits.RPA7R = 0b00110; //Pin C2RX_2 skonfigurowany jako wyjscie OC5
+    //RPA7Rbits.RPA7R = 0b00110; //Pin C2RX_2 skonfigurowany jako wyjscie OC5
     
     TRISGbits.TRISG6 = 0;   // pierwotnie C1RX1, aktualnie UART1 TX (niebiski)
     TRISGbits.TRISG8 = 1;   // pierwotnie C1TX1, aktulanie UART1 RX (zielony)
-    */ 
+     
     TRISBbits.TRISB13 = 0;  // SKIP
     //TRISAbits.TRISA7 = 0;  // PWM
-    TRISAbits.TRISA10 = 0;  // PWM
+    TRISAbits.TRISA10 = 1;  // PWM !!! NIE WOLNO ustawi? OUTPUT (Przypis 1 str. 44-22)
     
     //TRISBbits.TRISB12 = 1;  // ISO_CHECK_V_BLDC
     TRISFbits.TRISF0 = 0;   // ISO_U_PMOS_H
@@ -249,8 +267,8 @@ int main() {
     //LATGbits.LATG6 = 0;     
     //LATGbits.LATG8 = 1;     
     LATBbits.LATB13 = 0;    // SKIP
-    //LATAbits.LATA7 = 0;   // PWM
-    LATAbits.LATA10 = 0;
+    LATAbits.LATA7 = 0;   // PWM
+    //LATAbits.LATA10 = 0;
     
     /* UART 1 */
     //U1RXR = 0b1010;         // powi?zanie UART1 RX z pinem G8 (RPG8)
@@ -306,7 +324,7 @@ int main() {
     // FRAGMENT NIZBEDNY DO URUCHOMIENIA PRZETWORNICY PWM - KONIEC
     
     
-    //ADC_init();
+    ADC_init();
     
     // TEST WYJSC DO KOMUTACJI - START
     LATFbits.LATF0 = 1;     // U_PMOS
@@ -322,11 +340,10 @@ int main() {
     //test_faz(0);
     
     //printf("Start programu. \n");
-    
+    //LATBbits.LATB13 = 1;
+    //LATAbits.LATA10 = 1;
     while(1)
     {
-/*      
- *      LA
         ADC_meas(&wynik_ADC_Vbat, &wynik_ADC_Current, &wynik_ADC_W, &wynik_ADC_V, &wynik_ADC_U, &wynik_ADC_Vbldc);
         //printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
         Adcresult[x]= wynik_ADC_Vbat;
@@ -336,15 +353,14 @@ int main() {
         AdcresultU[x]= wynik_ADC_U;
         AdcresultVbldc[x]= wynik_ADC_Vbldc;
         
-        ISO_check_Vbldc(&wynik_check_Vbldc);
-        CheckVbldc[x]= wynik_check_Vbldc;
+        //ISO_check_Vbldc(&wynik_check_Vbldc);
+        //CheckVbldc[x]= wynik_check_Vbldc;
         x++;
         delay_us(60);
         if(x==100)
         {
             x= 0;
         }
- */
 //        delay_ms(1000);
     }
     return (EXIT_SUCCESS);
