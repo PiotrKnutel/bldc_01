@@ -176,7 +176,7 @@ int main() {
     //TEST WYJSC DO KOMUTACJI - KONIEC
     
     //timer3_interrupt_init(10000);        //przerwanie z f = x Hz
-    //test_faz(0);
+    test_faz(6);
     
     //printf("Start programu. \n");
 

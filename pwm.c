@@ -28,7 +28,7 @@ void pwm_config()
     PWMCON4bits.ITB = 1; // Independent Time Base Mode
     PWMCON4bits.DTC = 0b0010; //Dead time function is disabled
     IOCON4bits.PENH = 1; // modul PWM kontroluje pin PWM4H
-    IOCON4bits.PENL = 1; // GPIO kontroluje pin PWM4L
+    IOCON4bits.PENL = 0; // GPIO kontroluje pin PWM4L
     IOCON4bits.PMOD = 0b0011; // PWM4L utrzywywane w stanie '0' (ale raczej nie potrzebne gdy PENL=0)
     IOCON4bits.FLTMOD = 0b0011;   // wyl. wej. fault
     
