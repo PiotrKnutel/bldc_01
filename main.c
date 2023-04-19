@@ -23,6 +23,7 @@ unsigned int AdcresultW[100];
 unsigned int AdcresultV[100];
 unsigned int AdcresultU[100];
 unsigned int AdcresultVbldc[100];
+unsigned int ADC_res[6]; // kolejnosc: [Vbat, Current, W, V, U, Vbldc]
 
 static int stan = 0;
 
@@ -35,6 +36,15 @@ void komutacja()
         stan=1;
     test_faz(stan);
 }
+
+void __attribute__((vector(_ADC_EARLY_VECTOR), interrupt(ipl2soft), nomips16)) 
+adc_early_handler()
+{
+	IFS3bits.AD1GIF = 0;	// Clear interrupt flag for Earyl Interrupt ADC 
+               //(b?ad w nocie lub bibliotece TABLE 8-4, AD1GIF zamiast AD1G1IF)
+    ADC_meas(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
+}
+
 
 void __attribute__((vector(_TIMER_3_VECTOR), interrupt(ipl3soft), nomips16)) 
 timer3_handler()

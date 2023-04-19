@@ -47,7 +47,7 @@ void ADC_init()
     
     /* Ustawienie czasu próbowania i zegara konwersji - ADCxTIME */
     /* ADCx, gdzie x to nr dedykowanego ADC */
-    ADC1TIMEbits.ADCEIS = 0;        // Wczesne przewanie ADC 1 jest generowane 1 takt zegara ADC przed ko?cem konwersji, je?li ADCEIS=8 to 8 cykli...
+    ADC1TIMEbits.ADCEIS = 1;        // Wczesne przewanie ADC 1 jest generowane 1 takt zegara ADC przed ko?cem konwersji, je?li ADCEIS=8 to 8 cykli...
     //ADC1TIMEbits.SELRES = 3;        // rozdzielczosc 3=12 bitów
     //ADC1TIMEbits.DMAEN = 0;         // DMA 0=wy?. (tego nie rozpozanawa? kompliator)
     ADC1TIMEbits.ADCDIV = 1;        // 1=Tad=2*Tq, dzielnik taktowania ADC
@@ -102,12 +102,12 @@ void ADC_init()
     /* Ustawienie zródla i sposobu wyzwalania (trigger) */
     /* 0 to wyzwalanie zboczem, 1 - stanem wysokim. 
        Wyzwlanie zboczem mo?e spowodowa? opó?nienie do 2*Tad. */ 
-    ADCTRGSNSbits.LVL0 = 1;    // ADC0
-    ADCTRGSNSbits.LVL1 = 1;    // ADC1
-    ADCTRGSNSbits.LVL2 = 1;    // ADC2
-    ADCTRGSNSbits.LVL3 = 1;    // ADC3
-    ADCTRGSNSbits.LVL4 = 1;    // ADC4
-    ADCTRGSNSbits.LVL5 = 1;    // ADC5
+    ADCTRGSNSbits.LVL0 = 0;    // ADC0
+    ADCTRGSNSbits.LVL1 = 0;    // ADC1
+    ADCTRGSNSbits.LVL2 = 0;    // ADC2
+    ADCTRGSNSbits.LVL3 = 0;    // ADC3
+    ADCTRGSNSbits.LVL4 = 0;    // ADC4
+    ADCTRGSNSbits.LVL5 = 0;    // ADC5
     
     /*
     ADCTRGSNSbits.LVL24 = 1;    // ADC0
@@ -126,8 +126,9 @@ void ADC_init()
     ADCTRG2bits.TRGSRC5 = 5;
     
     /* Wczesne przerwania */
-    ADCEIEN1 = 0;                   // 0 = brak wczesnych przertwa?
+    ADCEIEN1 = 0;
     ADCEIEN2 = 0;
+    ADCEIEN1bits.EIEN0 = 1;    // wczesne przetwania dla ADC0
     
     /* WLACZENIE ADC */
     ADCCON1bits.ON = 1;
@@ -136,7 +137,7 @@ void ADC_init()
     while (!ADCCON2bits.BGVRRDY);
     while (ADCCON2bits.REFFLT);
     
-    /* Wl?czenie taktownia obwodów analogowych */
+    /* Wlaczenie taktownia obwodów analogowych */
     ADCANCONbits.ANEN0 = 1;
     ADCANCONbits.ANEN1 = 1;
     ADCANCONbits.ANEN2 = 1;
@@ -159,6 +160,13 @@ void ADC_init()
     ADCCON3bits.DIGEN3 = 1;
     ADCCON3bits.DIGEN4 = 1;
     ADCCON3bits.DIGEN5 = 1;
+    
+    /* Wlaczenie przerwan */
+    IEC3bits.AD1GIE = 0;
+    IPC26bits.AD1G1IP = 2;
+    IPC26bits.AD1G1IS = 1;
+    IEC3bits.AD1GIE = 1;
+    asm volatile("ei");
     
     /*Wlaczenie TIMERA 1 */
     T1CONbits.ON = 1;
