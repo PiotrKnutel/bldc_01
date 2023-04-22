@@ -52,7 +52,7 @@ void ADC_init()
     //ADC1TIMEbits.DMAEN = 0;         // DMA 0=wy?. (tego nie rozpozanawa? kompliator)
     ADC1TIMEbits.ADCDIV = 1;        // 1=Tad=2*Tq, dzielnik taktowania ADC
     ADC1TIMEbits.SAMC = 5;          // czas próbkowania, 0x3FF=1025*Tad, 5=5*Tad
-    
+    ADCGIRQEN1bits.AGIEN0 =1;
     ADC2TIMEbits.ADCEIS = 0;
     ADC2TIMEbits.ADCDIV = 1;
     ADC2TIMEbits.SAMC = 5;
@@ -128,7 +128,7 @@ void ADC_init()
     /* Wczesne przerwania */
     ADCEIEN1 = 0;
     ADCEIEN2 = 0;
-    ADCEIEN1bits.EIEN0 = 1;    // wczesne przetwania dla ADC0
+    //ADCEIEN1bits.EIEN0 = 1;    // wczesne przetwania dla ADC0
     
     /* WLACZENIE ADC */
     ADCCON1bits.ON = 1;
@@ -162,10 +162,10 @@ void ADC_init()
     ADCCON3bits.DIGEN5 = 1;
     
     /* Wlaczenie przerwan */
-    IEC3bits.AD1GIE = 0;
-    IPC26bits.AD1G1IP = 2;
-    IPC26bits.AD1G1IS = 1;
-    IEC3bits.AD1GIE = 1;
+    IEC3bits.AD1RSIE = 0;
+    IPC25bits.AD1RSIP = 7;
+    IPC25bits.AD1RSIS = 1;
+    IEC3bits.AD1RSIE = 1;
     asm volatile("ei");
     
     /*Wlaczenie TIMERA 1 */

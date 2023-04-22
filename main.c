@@ -37,11 +37,11 @@ void komutacja()
     test_faz(stan);
 }
 
-void __attribute__((vector(_ADC_EARLY_VECTOR), interrupt(ipl2soft), nomips16)) 
-adc_early_handler()
+void __attribute__((vector(_ADC_URDY_VECTOR), interrupt(IPL7SRS), nomips16)) 
+adc_update_ready_after_suspend_handler()
 {
-	IFS3bits.AD1GIF = 0;	// Clear interrupt flag for Earyl Interrupt ADC 
-               //(b?ad w nocie lub bibliotece TABLE 8-4, AD1GIF zamiast AD1G1IF)
+	IFS3bits.AD1RSIF = 0;	// Clear interrupt flag for Earyl Interrupt ADC 
+    //IFS3bits.AD1D0IF= 0;
     ADC_meas(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
 }
 
@@ -70,9 +70,7 @@ void timer3_interrupt_init(int frequency)
  	IFS0bits.T3IF = 0;          // Clear interrupt flag for timer 3
     IPC3bits.T3IP = 3;          // Interrupt priority 3
     IPC3bits.T3IS = 1;          // Sub-priority 1
-    IEC0bits.T3IE = 1;          // Enable Timer 3 Interrupt
-
-    asm volatile("ei");
+////    IEC0bits.T3IE = 1;          // Enable Timer 3 
  	T3CONbits.ON = 1;           // Module is enabled
 }
 
@@ -88,6 +86,9 @@ int main() {
     unsigned int wynik_ADC_Vbldc = 0;
     
     unsigned int flaga_skip_start = 0;
+    INTCONbits.MVEC= 1;
+    PRISS= 0x76543211;
+    asm volatile("ei");
     
     ANSELA = 0;
     ANSELB = 0;
