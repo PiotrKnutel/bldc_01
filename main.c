@@ -26,8 +26,9 @@ unsigned int AdcresultU[100];
 unsigned int AdcresultVbldc[100];
 unsigned int ADC_res[6]; // kolejnosc: [Vbat, Current, W, V, U, Vbldc]
 
-unsigned int current;
-unsigned int next_PWM;
+unsigned int current;           // prad zmierzony
+unsigned int current_specified; //zadany prad
+unsigned int next_PWM;          // wartosc PWM do ustawienia
 
 static int stan = 0;
 
@@ -47,8 +48,9 @@ adc_update_ready_after_suspend_handler()
 	IFS3bits.AD1RSIF = 0;	// Clear interrupt flag
     //IFS3bits.AD1D0IF= 0;
     ADC_meas(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
-    current = ADC_res[1]; // wyluskanie 
-    next_PWM = current_controller(current);
+    current = ADC_res[1]; // wyluskanie
+    current_specified = 2500; // tymaczaowo tutaj ustalane
+    next_PWM = current_controller(current, current_specified);
     pwm_set(next_PWM);
 }
 

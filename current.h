@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-unsigned int current_controller(unsigned int); 
+unsigned int current_controller(unsigned int, unsigned int); 
 
 
 #ifdef	__cplusplus
