@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c delay.c uart.c pwm.c bridge.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c delay.c uart.c pwm.c bridge.c current.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/bridge.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/current.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/bridge.o.d ${OBJECTDIR}/current.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/current.o
 
 # Source Files
-SOURCEFILES=main.c adc.c delay.c uart.c pwm.c bridge.c
+SOURCEFILES=main.c adc.c delay.c uart.c pwm.c bridge.c current.c
 
 
 
@@ -143,6 +143,12 @@ ${OBJECTDIR}/bridge.o: bridge.c  .generated_files/flags/default/be45ae89b92bde49
 	@${RM} ${OBJECTDIR}/bridge.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/bridge.o.d" -o ${OBJECTDIR}/bridge.o bridge.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/current.o: current.c  .generated_files/flags/default/c9c93ce49cb148e9794d419998eba51d7cc06dd6 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/current.o.d 
+	@${RM} ${OBJECTDIR}/current.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/current.o.d" -o ${OBJECTDIR}/current.o current.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 else
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/25f5b2062fbc7405c960a37b8e9551e4bccdfb84 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
@@ -179,6 +185,12 @@ ${OBJECTDIR}/bridge.o: bridge.c  .generated_files/flags/default/6cf18aa531e65fe6
 	@${RM} ${OBJECTDIR}/bridge.o.d 
 	@${RM} ${OBJECTDIR}/bridge.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/bridge.o.d" -o ${OBJECTDIR}/bridge.o bridge.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/current.o: current.c  .generated_files/flags/default/cc79e1aafedce4c548bc6a41bc2919a99b7d7c74 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/current.o.d 
+	@${RM} ${OBJECTDIR}/current.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/current.o.d" -o ${OBJECTDIR}/current.o current.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 

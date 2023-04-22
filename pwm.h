@@ -9,5 +9,6 @@
 #include <stdlib.h>
 
 void pwm_config();
+void pwm_set(unsigned int);
 
 #endif	/* PWM_H */

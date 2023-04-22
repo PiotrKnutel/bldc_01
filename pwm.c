@@ -33,7 +33,13 @@ void pwm_config()
     IOCON4bits.FLTMOD = 0b0011;   // wyl. wej. fault
     
     PHASE4 = 0x00F0;
-    PDC4 = 0x0078; // PWM Genertaor Duty Cycle 0x0078=120 (po?owa 240)
+    PDC4 = 0x0078; // PWM Genertaor Duty Cycle 0x0078=120 (polowa 240)
     
     PTCONbits.PTEN = 1;
+}
+
+void pwm_set(unsigned int pwm)
+{
+    // Trzeba sprawdzic, czy potrzeba tu cos dopisac! 
+    PDC4 = pwm;
 }

@@ -15,6 +15,7 @@
 #include "adc.h"
 #include "pwm.h"
 #include "bridge.h"
+#include "current.h"
 
 typedef unsigned char uchar_t;
 unsigned int Adcresult[100];
@@ -24,6 +25,9 @@ unsigned int AdcresultV[100];
 unsigned int AdcresultU[100];
 unsigned int AdcresultVbldc[100];
 unsigned int ADC_res[6]; // kolejnosc: [Vbat, Current, W, V, U, Vbldc]
+
+unsigned int current;
+unsigned int next_PWM;
 
 static int stan = 0;
 
@@ -40,9 +44,12 @@ void komutacja()
 void __attribute__((vector(_ADC_URDY_VECTOR), interrupt(IPL7SRS), nomips16)) 
 adc_update_ready_after_suspend_handler()
 {
-	IFS3bits.AD1RSIF = 0;	// Clear interrupt flag for Earyl Interrupt ADC 
+	IFS3bits.AD1RSIF = 0;	// Clear interrupt flag
     //IFS3bits.AD1D0IF= 0;
     ADC_meas(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
+    current = ADC_res[1]; // wyluskanie 
+    next_PWM = current_controller(current);
+    pwm_set(next_PWM);
 }
 
 
