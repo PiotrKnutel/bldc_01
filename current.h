@@ -12,6 +12,11 @@
 extern "C" {
 #endif
 
+#include <xc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+ 
 unsigned int current_controller(unsigned int, unsigned int); 
 
 
