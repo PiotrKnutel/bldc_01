@@ -198,10 +198,17 @@ int main() {
     //timer3_interrupt_init(10000);        //przerwanie z f = x Hz
     test_faz(6);
     
+    pwm_set(5); // od 5 do 204, czyli 2%..85% z 240
+    
+    /*Wlaczenie TIMERA 1 */
+    // Wlaczenie taktowania ADC, a w konsewkencji przerwan do regulatora I.
+    T1CONbits.ON = 1;
+    
     //printf("Start programu. \n");
 
     while(1)
     {
+        /*
         ADC_meas(&wynik_ADC_Vbat, &wynik_ADC_Current, &wynik_ADC_W, &wynik_ADC_V, &wynik_ADC_U, &wynik_ADC_Vbldc);
         //printf("Wysylam liczbe: %d, %d, %d\n\r", x, wynik_ADC_Vbat, wynik_ADC_Current);
         Adcresult[x]= wynik_ADC_Vbat;
@@ -217,7 +224,15 @@ int main() {
         {
             x= 0;
         }
+        */
 //        delay_ms(1000);
+        
+        // prosty prostokat z PWM
+        delay_ms(2000);
+        set_pwm(120);
+        delay_ms(2000);
+        set_pwm(5);
+       
     }
     return (EXIT_SUCCESS);
 }
