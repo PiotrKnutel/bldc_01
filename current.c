@@ -35,7 +35,9 @@ unsigned int current_controller(unsigned int meas_current, unsigned int ref_curr
             // if (current_diff >= 4095)  //zawsze powinno byc <=4095 
             //      current_diff = 4095;
         //current_diff = int(current_diff) - OFFSET;
-        
+    
+    current_diff *= Ki;
+    
     // calka
     I_out = (current_diff + previos_I_out);
     
@@ -48,7 +50,6 @@ unsigned int current_controller(unsigned int meas_current, unsigned int ref_curr
     // zachowanie I_out dla nastepnych iteracji
     previos_I_out = I_out;
     
-    I_out = I_out * Ki;
     
     pwm_to_set_i = pwm_now_i + I_out;
     

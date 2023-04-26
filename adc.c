@@ -169,7 +169,7 @@ void ADC_init()
     asm volatile("ei");
     
     /*Wlaczenie TIMERA 1 */
-    T1CONbits.ON = 1;
+    //T1CONbits.ON = 1;
 }
     
 void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
