@@ -3,15 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/bridge.c</file>
-            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/current.h</file>
-            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/pwm.c</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/buck_converter_main.h</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/buck_converter_int.h</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/current_controller.c</file>
             <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/adc.c</file>
-            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/pwm.h</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/IntADCp7.c</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/adc_main.h</file>
             <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/main.c</file>
-            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/delay.c</file>
-            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/current.c</file>
-            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/bridge.h</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/buck_converter.c</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/adc_int.h</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/current_controller.h</file>
         </group>
     </open-files>
 </project-private>

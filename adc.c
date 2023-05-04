@@ -1,38 +1,47 @@
-/* Pisane w oparciu o not? i instrukcj? referencyjn? (sekcja 22) */
+/******************************************************************************* 
+ * File: adc.c
+ * 
+ * Plik zawiera funkcje i zmienne dotyczace przetwornikow ADC0-ADC5.
+ * Funkcje i znienne udostepniane do 'main()' znajduja sie w 'adc_main.h'.
+ * Funkcje i znienne udostepniane do obslugi przerwania 'IntADCp7()'
+ * znajduja sie w 'adc_int.h'.
+ * Opis wielkosci mierzonych przez poszczegolne ADC znajduje sie w pliku
+ * 'adc_int.h'.
+ * Program przygotowany w oparciu o note katalogowa PIC32MK_GP_MC i instrukcje
+ * referencyjna (sekcja 22).
+ ******************************************************************************/
 
-#include <xc.h>
-#include "adc.h"
-#include "uart.h"
-#include "p32mk1024mcf064.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include "adc_main.h"
+#include "adc_int.h"
 
-void ADC_init() 
+/*
+ * Konfiguracja ADC0-ADC5.
+ */
+void adc_config()
 {
-    /* TIMER 1 do wyzwalania ADC */
-    unsigned int takt_magistrali = 60000000;  // 60 MHz
-    unsigned int f_tmr1 = 10000; // 10 kHz
-    T1CONbits.ON = 0;
-    TMR1 = 0;
-    PR1 = takt_magistrali/256/f_tmr1 - 1;
-    T1CONbits.TCKPS = 0b11; // prescaler 256
-    T1CONbits.TCS = 0;
+    /* Konfiguracja timera TMR1 do wyzwalania ADC z f = 10 kHz. */
+    unsigned int takt_magistrali = 60000000;    // 60 MHz
+    unsigned int f_tmr1 = 10000;                // 10 kHz
+    T1CONbits.ON = 0;                           // wyl. TRM1
+    TMR1 = 0;                                   // wartosc poczatkowa TMR1
+    PR1 = takt_magistrali/256/f_tmr1 - 1;       // wartosc przepelnienia TRM1 
+    T1CONbits.TCKPS = 0b11; // prescaler taktowania TRM1 = 256
+    T1CONbits.TCS = 0;      // wybor zrodla taktowania TRM1: magistarla PBCLK2 
     
-    
-    /* ADC AN 1 */
-    /* Procedura z noty, poczawszy od str. 371 
-     * i z "reference manual" section 22 (w tym przyk??d 22-1 str. 66). */
+    /* Konfiguracja ADC0-ADC5
+     * Procedura z noty, poczawszy od str. 371 i z "reference manual"
+     * section 22 (w tym przyklad 22-1 str. 66). */
     
     ADC1CFG = DEVADC1;
     ADC2CFG = DEVADC2;
     
-    /* Konfiguracja ADCCON 1 */
+    /* Konfiguracja rejestru ADCCON 1 */
     ADCCON1 = 0;                    // bez funkcji z tego rejestru, w tym bit ON=1 (ADC wy?)
-    
+  
     ADCCON1bits.AICPMPEN = 0;       // bo Vdd >= 2.5V
     CFGCONbits.IOANCPEN = 0;        // bo Vdd >= 2.5V
     
-    /* Konfiguracja ADCCON2 */
+    /* Konfiguracja rejestru ADCCON2 */
     ADCCON2 = 0;                    // nie potrzenbna w przypadku u?ywania tylko wej?? klasy 1 (dedykowanych ADC)
     
     /* Inicjalizacja "warm up time" - ADCANCON */
@@ -166,31 +175,29 @@ void ADC_init()
     IPC25bits.AD1RSIP = 7;
     IPC25bits.AD1RSIS = 1;
     IEC3bits.AD1RSIE = 1;
-    asm volatile("ei");
-    
-    /*Wlaczenie TIMERA 1 */
-    //T1CONbits.ON = 1;
+    //asm volatile("ei");       //wymagane, ale wl. juz w 'main()'.
 }
-    
-void ADC_meas(unsigned int *out_result_Vbat, unsigned int *out_result_Current,
-        unsigned int *out_result_Wsens, unsigned int *out_result_Vsens,
-        unsigned int *out_result_Usens, unsigned int *out_result_Vbldc) {
 
-    /* Wyzwolenie konwersji */
-    // ADCCON3bits.GLSWTRG = 1; // wyzw poziomem, bez powrotu do 0 // przecie? to nie potrzebne jak wyzwala si? timerem
+/*
+ * Uruchomienie Timera 1 (TRM1) wyzwalajacego cyklicznie przetwarzanie
+ * ADC0-ADC5.
+ */
+void adc_start_TRM1()
+{
+    T1CONbits.ON = 1;
+}
 
-    while (ADCDSTAT1bits.ARDY0 == 0);   // Czekanie, az konwersja bedzie ukonczona
-    /*while (ADCDSTAT1bits.ARDY1 == 0); // nie potrzebne, bo powinnny si? sko?czy? wtym samym czasie, TRZEBA TO SPRAWDZI? !!!
-    while (ADCDSTAT1bits.ARDY2 == 0);
-    while (ADCDSTAT1bits.ARDY3 == 0);
-    while (ADCDSTAT1bits.ARDY4 == 0);
-    while (ADCDSTAT1bits.ARDY5 == 0);
-    */
-    
-    (*out_result_Vbat) = ADCDATA4;      // pobranie wyniku
-    (*out_result_Current) = ADCDATA2;
-    (*out_result_Wsens) = ADCDATA3;
-    (*out_result_Vsens) = ADCDATA0;
-    (*out_result_Usens) = ADCDATA1;
-    (*out_result_Vbldc) = ADCDATA5;
-}   
+/* 
+ * Przypisanie wynikow pomiarow ADC0-ADC5 pod wskazane adresy.
+ */
+void adc_read (unsigned int* ADC0_phase_V, unsigned int* ADC1_phase_U,
+        unsigned int* ADC2_current, unsigned int* ADC3_phase_W,
+        unsigned int* ADC4_Vbat, unsigned int* ADC5_Vbldc)
+{    
+    (*ADC0_phase_V) = ADCDATA0;
+    (*ADC1_phase_U) = ADCDATA1;
+    (*ADC2_current) = ADCDATA2;
+    (*ADC3_phase_W) = ADCDATA3;
+    (*ADC4_Vbat)    = ADCDATA4;
+    (*ADC5_Vbldc)   = ADCDATA5;
+}

@@ -1,21 +1,13 @@
-/* 
- * File:   pragma_config.h
- * Author: user
- *
- * Created on 22 marca 2023, 16:33
- */
+/******************************************************************************* 
+ * File: pragma_config.h
+ * 
+ * Plik zawiera dyrektywy #pragma wykorzystane do konfiguracji mikrokontrolera
+ * PIC32MK1024MCF064, w tym do konfiguracji taktowania rdzenia i magistral.
+ *   - Zrodlo taktowania: zewnetrzny generator POSC 10 MHz
+ *   - Taktowanie magistarli SYSCLK: 120 MHz
+ *   - Taktowanie magistarli PBCLKx: 60 MHz
+ ******************************************************************************/
 
-#ifndef PRAGMA_CONFIG_H
-#define	PRAGMA_CONFIG_H
-
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
-//******************************************************************************
-//* C O N F I G  C L O C K  S E C T I O N
-//******************************************************************************
 #pragma config ICESEL = ICS_PGx1
 
 // Device Config Bits in  DEVCFG1:	
@@ -42,11 +34,3 @@ extern "C" {
 //#pragma config IOL1WAY = OFF
 //#pragma config FCKSM = CSECME
 #pragma config JTAGEN = OFF
-
-
-#ifdef	__cplusplus
-}
-#endif
-
-#endif	/* PRAGMA_CONFIG_H */
-

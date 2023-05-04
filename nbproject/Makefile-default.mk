@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c delay.c uart.c pwm.c bridge.c current.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c delay.c uart.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/current.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/pwm.o.d ${OBJECTDIR}/bridge.o.d ${OBJECTDIR}/current.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/delay.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/bridge.o.d ${OBJECTDIR}/IntADCp7.o.d ${OBJECTDIR}/current_controller.o.d ${OBJECTDIR}/buck_converter.o.d ${OBJECTDIR}/pins_config.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/pwm.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/current.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/delay.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o
 
 # Source Files
-SOURCEFILES=main.c adc.c delay.c uart.c pwm.c bridge.c current.c
+SOURCEFILES=main.c adc.c delay.c uart.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c
 
 
 
@@ -131,23 +131,35 @@ ${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/7e15a6bc2597dc519929
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/pwm.o: pwm.c  .generated_files/flags/default/b35a14ba7eb70584e9ae6a90ff7e900146c03196 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pwm.o.d 
-	@${RM} ${OBJECTDIR}/pwm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/pwm.o.d" -o ${OBJECTDIR}/pwm.o pwm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
 ${OBJECTDIR}/bridge.o: bridge.c  .generated_files/flags/default/be45ae89b92bde49869081297669884dd68b7eb2 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/bridge.o.d 
 	@${RM} ${OBJECTDIR}/bridge.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/bridge.o.d" -o ${OBJECTDIR}/bridge.o bridge.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/current.o: current.c  .generated_files/flags/default/c9c93ce49cb148e9794d419998eba51d7cc06dd6 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+${OBJECTDIR}/IntADCp7.o: IntADCp7.c  .generated_files/flags/default/817e3cf4c33bf0a9b69531ae1801a4deb4ff2325 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/current.o.d 
-	@${RM} ${OBJECTDIR}/current.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/current.o.d" -o ${OBJECTDIR}/current.o current.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	@${RM} ${OBJECTDIR}/IntADCp7.o.d 
+	@${RM} ${OBJECTDIR}/IntADCp7.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/IntADCp7.o.d" -o ${OBJECTDIR}/IntADCp7.o IntADCp7.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/current_controller.o: current_controller.c  .generated_files/flags/default/f4d9905f75251bf1d2af384be59db2db105cc239 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/current_controller.o.d 
+	@${RM} ${OBJECTDIR}/current_controller.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/current_controller.o.d" -o ${OBJECTDIR}/current_controller.o current_controller.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/buck_converter.o: buck_converter.c  .generated_files/flags/default/ea56927b24c6cbdfccae39d251315028409710e4 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/buck_converter.o.d 
+	@${RM} ${OBJECTDIR}/buck_converter.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/buck_converter.o.d" -o ${OBJECTDIR}/buck_converter.o buck_converter.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/pins_config.o: pins_config.c  .generated_files/flags/default/36a03c0116b7ea92eba8e6922cf594db53579daa .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pins_config.o.d 
+	@${RM} ${OBJECTDIR}/pins_config.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/pins_config.o.d" -o ${OBJECTDIR}/pins_config.o pins_config.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 else
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/25f5b2062fbc7405c960a37b8e9551e4bccdfb84 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
@@ -174,23 +186,35 @@ ${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/eb7319714e1623757387
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/pwm.o: pwm.c  .generated_files/flags/default/7ada700514a7c7f17d2aebd3e424b4727145e1a8 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pwm.o.d 
-	@${RM} ${OBJECTDIR}/pwm.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/pwm.o.d" -o ${OBJECTDIR}/pwm.o pwm.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
-	
 ${OBJECTDIR}/bridge.o: bridge.c  .generated_files/flags/default/6cf18aa531e65fe69084ad0cae9c21d76c4681d1 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/bridge.o.d 
 	@${RM} ${OBJECTDIR}/bridge.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/bridge.o.d" -o ${OBJECTDIR}/bridge.o bridge.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
-${OBJECTDIR}/current.o: current.c  .generated_files/flags/default/cc79e1aafedce4c548bc6a41bc2919a99b7d7c74 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+${OBJECTDIR}/IntADCp7.o: IntADCp7.c  .generated_files/flags/default/2d19e0e11c360fd2b95766402d05b3b4f591f9d5 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/current.o.d 
-	@${RM} ${OBJECTDIR}/current.o 
-	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/current.o.d" -o ${OBJECTDIR}/current.o current.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	@${RM} ${OBJECTDIR}/IntADCp7.o.d 
+	@${RM} ${OBJECTDIR}/IntADCp7.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/IntADCp7.o.d" -o ${OBJECTDIR}/IntADCp7.o IntADCp7.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/current_controller.o: current_controller.c  .generated_files/flags/default/8d7765cdd6c1819bc3be39ae36834b74374ec3ef .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/current_controller.o.d 
+	@${RM} ${OBJECTDIR}/current_controller.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/current_controller.o.d" -o ${OBJECTDIR}/current_controller.o current_controller.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/buck_converter.o: buck_converter.c  .generated_files/flags/default/13fb8024d2a0c7b9e1708a1844191c0962d86fec .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/buck_converter.o.d 
+	@${RM} ${OBJECTDIR}/buck_converter.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/buck_converter.o.d" -o ${OBJECTDIR}/buck_converter.o buck_converter.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/pins_config.o: pins_config.c  .generated_files/flags/default/ed16ee479b24296a02767003ab309b456aebaf9a .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pins_config.o.d 
+	@${RM} ${OBJECTDIR}/pins_config.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/pins_config.o.d" -o ${OBJECTDIR}/pins_config.o pins_config.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 
