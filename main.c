@@ -3,12 +3,9 @@
  * 
  * Ogolny opis projektu znajduja sie w pliku 'README.txt'.
  * 
- * Plik zawiera glowna funkcje sterownika BLDC. Funkcja 'main' realizuje:
- *   - wywolanie funkcji inicjalizujacych peryferia mikrokontrolera: 
- *     GPIO                 - piny wejscia i wyjscia
- *     ADC                  - rownolegle dzialajace ADC0-ADC5
- *     Motor Control PWM    - sygnal PWM do sterowania przetwornica Vbat/Vbldc
- *      
+ * Plik zawiera glowna funkcje sterownika BLDC. Funkcja 'main' zawiera wywolania
+ * funkcji do konfiguracji i inicjalizacji peryferiów mikrokontrolera i rozruchu
+ * przetwornicy buck Vbat/Vbldc.
  ******************************************************************************/ 
 
 #include "p32mk1024mcf064.h"
@@ -26,23 +23,19 @@
 
 int main() {
     
-    interrupt_on();
-    
-    pins_config();
-    
-    // Stan jalowy wszyskich 3 faz silnika po uruchomieniu programu 
-    bridge_idle_state();
-    
-    adc_config();
-    
-    bridge_set_state(6);
-    
-    buck_converter_config();
-    buck_converter_init();
-    buck_converter_set_pwm(5); // od 5 do 204, czyli 2%..85% z 240
-    
-    // Wlaczenie TMR1 do taktowania ADC, a w konsewkencji przerwan do regulatora I.
-    adc_start_TMR1();
+    interrupt_on();             // Wl. obslugi przerwan przez PIC32.
+    pins_config();              // Konfiguracja pinów wej./wyj.
+    bridge_idle_state();        // Stan jalowy wszyskich 3 faz silnika.
+    adc_config();               // Konfiguracja ADC0-ADC5.
+    bridge_set_state(6);        // do testów!
+    buck_converter_config();    // Konfiguracja peryferiów (w tym PWM) do
+                                // sterowania przetwornica buck Vbat/Vbldc.
+    buck_converter_init();      // Inicjalizacja pracy przetwornicy Vbat/Vbldc.
+    buck_converter_set_pwm(5);  // Ust. wypelnienia PWM, napiecia poczatk. Vbldc
+                                // od 5 do 204, czyli 2%..85% z 240
+                                // do testów!
+    adc_start_TMR1();   // Wlaczenie TMR1 do taktowania ADC, a w konsewkencji
+                        // przerwan do regulatora I.
     
     while(1)
     {
