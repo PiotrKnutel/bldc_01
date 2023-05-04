@@ -10,15 +10,23 @@
  *   - wywolanie funkcji do komutacji silnika.
  ******************************************************************************/     
 
+#include "p32mk1024mcf064.h"
 #include "adc_int.h"
+#include "bridge_int.h"
+#include "buck_converter_int.h"
+
+unsigned int ADC_res[6];        // tablica na wyniki ADC0-ADC5
+unsigned int current;           // przepisana z wyników ADC wartosc pradu 
+unsigned int current_specified; // prad zadany, bez uwzglednienia offsetu
+unsigned int next_pwm;          // nowe wypelnienie syg. PWM sterujacego przetwornica buck Vbat/Vbldc
 
 void __attribute__((vector(_ADC_URDY_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
 {
 	IFS3bits.AD1RSIF = 0;           // wyl. flagi przerwania 
-    ADC_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
+    adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
     current = ADC_res[1];
-    current_specified = 2500; // tymaczaowo tutaj ustalane
-    next_PWM = current_controller(current, current_specified);
-    pwm_set(next_PWM);
+    current_specified = 2500;       // tymaczaowo tutaj ustalane
+    next_pwm = current_controller(current, current_specified);
+    buck_converter_set_pwm(next_pwm);
 }

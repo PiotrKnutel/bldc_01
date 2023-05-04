@@ -5,9 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>p32mk1024mcf064.h</itemPath>
-      <itemPath>delay.h</itemPath>
-      <itemPath>uart.h</itemPath>
-      <itemPath>bridge.h</itemPath>
       <itemPath>pragma_config.h</itemPath>
       <itemPath>adc_main.h</itemPath>
       <itemPath>adc_int.h</itemPath>
@@ -16,6 +13,8 @@
       <itemPath>buck_converter_int.h</itemPath>
       <itemPath>pins_config_main.h</itemPath>
       <itemPath>pins_config_buck_conv.h</itemPath>
+      <itemPath>bridge_main.h</itemPath>
+      <itemPath>bridge_int.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -26,8 +25,6 @@
                    projectFiles="true">
       <itemPath>main.c</itemPath>
       <itemPath>adc.c</itemPath>
-      <itemPath>delay.c</itemPath>
-      <itemPath>uart.c</itemPath>
       <itemPath>bridge.c</itemPath>
       <itemPath>IntADCp7.c</itemPath>
       <itemPath>current_controller.c</itemPath>

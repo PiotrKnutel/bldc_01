@@ -12,6 +12,7 @@
  * referencyjna (sekcja 44).
  ******************************************************************************/
 
+#include "p32mk1024mcf064.h"
 #include "buck_converter_main.h"
 #include "buck_converter_int.h"
 #include "pins_config_buck_conv.h"      // definicje nazw pinów
@@ -20,7 +21,7 @@
  * Konfiguracacja peryferiow, w tym 'Motor Control PWM 4', do sterowania
  * przetwornica buck Vbat/Vbldc.  
  */
-void pwm_config()
+void buck_converter_config()
 {
     PTCONbits.PTEN = 0; //wylaczenie modulu PWM
     
@@ -80,6 +81,7 @@ void buck_converter_init()
             PIN_SKIP = 1;
         }            
     }
+    T2CONbits.ON = 0;
 }
 
 /*

@@ -11,6 +11,7 @@
  * referencyjna (sekcja 22).
  ******************************************************************************/
 
+#include "p32mk1024mcf064.h"
 #include "adc_main.h"
 #include "adc_int.h"
 
@@ -182,7 +183,7 @@ void adc_config()
  * Uruchomienie Timera 1 (TRM1) wyzwalajacego cyklicznie przetwarzanie
  * ADC0-ADC5.
  */
-void adc_start_TRM1()
+void adc_start_TMR1()
 {
     T1CONbits.ON = 1;
 }

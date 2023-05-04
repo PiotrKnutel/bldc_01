@@ -11,13 +11,14 @@
  *   - ustawienie poczatkowego stanu logicznego wyjscia SKIP = 0.
  */
 
+#include "p32mk1024mcf064.h"
 #include "pins_config_main.h"
 #include "pins_config_buck_conv.h"
 
 /*
  * Konfiguracja wejsc i wyjsc mikrokontrolera. 
  */
-void pin_config()
+void pins_config()
 {
     /* Ustawienie wszystkich portów jako wej./wyj. cyfrowe. */
     ANSELA = 0;
