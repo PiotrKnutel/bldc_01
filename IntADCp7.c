@@ -14,6 +14,7 @@
 #include "adc_int.h"
 #include "bridge_int.h"
 #include "buck_converter_int.h"
+#include "current_controller.h"
 
 unsigned int ADC_res[6];        // tablica na wyniki ADC0-ADC5
 unsigned int current;           // przepisana z wyników ADC wartosc pradu 
@@ -27,6 +28,6 @@ IntADCp7 ()
     adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
     current = ADC_res[1];
     current_specified = 2500;       // tymaczaowo tutaj ustalane
-    next_pwm = current_controller(current, current_specified);
+    current_controller(current_specified, current, &next_pwm);
     buck_converter_set_pwm(next_pwm);
 }

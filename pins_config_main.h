@@ -1,9 +1,9 @@
-/* 
- * File: pins_config.h
+/*******************************************************************************
+ * File: pins_config_main.h
  * 
  * Funkcja dotyczaca konfiguracji pinów wejscia/wyjscia, udostepniona
  * do 'main.c'.
- */
+ ******************************************************************************/
 
 /*
  * Konfiguracja wejsc i wyjsc mikrokontrolera.

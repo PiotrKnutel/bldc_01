@@ -17,6 +17,7 @@
 #include "adc_main.h"
 #include "buck_converter_main.h"
 #include "bridge_main.h"
+#include "interrupt_on.h"
 
 #include "bridge_int.h"  // TYLKO PRZY TESTACH! tymczasowo dla 'bridge_set_state()'
 #include "buck_converter_int.h" // TYLKO PRZY TESTACH! tymczasowo dla 'buck_converter_set_pwm()'
@@ -25,9 +26,7 @@
 
 int main() {
     
-    INTCONbits.MVEC= 1;
-    PRISS= 0x76543211;
-    asm volatile("ei");
+    interrupt_on();
     
     pins_config();
     

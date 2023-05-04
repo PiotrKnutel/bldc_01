@@ -1,4 +1,4 @@
-/* 
+/*******************************************************************************
  * File: pins_config.c
  * 
  * Funkcja dotyczaca konfiguracji pinów wejscia/wyjscia.
@@ -9,7 +9,7 @@
  *     sterujacych przetwornica buck Vbat/Vbldc (PWM, SKIP) i syg. sterujacych
  *     mostkiem MOSFET odpowiednio jako wejscia lub wyjscia;
  *   - ustawienie poczatkowego stanu logicznego wyjscia SKIP = 0.
- */
+ ******************************************************************************/
 
 #include "p32mk1024mcf064.h"
 #include "pins_config_main.h"

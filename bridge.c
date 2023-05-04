@@ -1,7 +1,8 @@
-/* File: bridge.c
+/*******************************************************************************
+ * File: bridge.c
  * 
  * Funkcje i zmienne do sterowania mostkiem trójfazowym silnika.
- */
+ ******************************************************************************/
 
 #include "p32mk1024mcf064.h"
 #include "bridge_main.h"

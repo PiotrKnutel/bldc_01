@@ -15,6 +15,7 @@
       <itemPath>pins_config_buck_conv.h</itemPath>
       <itemPath>bridge_main.h</itemPath>
       <itemPath>bridge_int.h</itemPath>
+      <itemPath>interrupt_on.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -30,6 +31,7 @@
       <itemPath>current_controller.c</itemPath>
       <itemPath>buck_converter.c</itemPath>
       <itemPath>pins_config.c</itemPath>
+      <itemPath>interrupt_on.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

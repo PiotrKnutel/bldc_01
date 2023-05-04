@@ -1,8 +1,9 @@
-/* File: bridge_int.h
+/*******************************************************************************
+ * File: bridge_int.h
  * 
  * Funkcja dotyczaca sterowania mostkiem 3-fazowym MOSFET, udostepniona
  * do 'IntADCp7.c'.
- */
+ ******************************************************************************/
 
 /*
  * Ustawianie MOSFETów mostka (stanów komutacji) wedlug podanego nr stanu.
