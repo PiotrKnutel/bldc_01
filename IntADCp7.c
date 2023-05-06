@@ -21,13 +21,20 @@ unsigned int current;           // przepisana z wyników ADC wartosc pradu
 unsigned int current_specified; // prad zadany, bez uwzglednienia offsetu
 unsigned int next_pwm;          // nowe wypelnienie syg. PWM sterujacego przetwornica buck Vbat/Vbldc
 
-void __attribute__((vector(_ADC_URDY_VECTOR), interrupt(IPL7SRS), nomips16)) 
+void __attribute__((vector(_ADC_EARLY_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
 {
-	IFS3bits.AD1RSIF = 0;           // wyl. flagi przerwania 
+	IFS3bits.AD1GIF = 0;           // wyl. flagi przerwania
+    IFS3bits.AD1D0IF= 0;
     adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
-    current = ADC_res[1];
-    current_specified = 2500;       // tymaczaowo tutaj ustalane
+    current = ADC_res[2];
+    current_specified = 93;       // tymaczaowo tutaj ustalane
     current_controller(current_specified, current, &next_pwm);
     buck_converter_set_pwm(next_pwm);
+    /*
+    if (PORTBbits.RB15 == 0)
+        LATBbits.LATB15 == 1;
+    else
+        LATBbits.LATB15 == 0;
+    */
 }

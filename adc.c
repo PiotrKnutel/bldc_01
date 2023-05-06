@@ -62,7 +62,7 @@ void adc_config()
     //ADC1TIMEbits.DMAEN = 0;         // DMA 0=wy?. (tego nie rozpozanawa? kompliator)
     ADC1TIMEbits.ADCDIV = 1;        // 1=Tad=2*Tq, dzielnik taktowania ADC
     ADC1TIMEbits.SAMC = 5;          // czas próbkowania, 0x3FF=1025*Tad, 5=5*Tad
-    ADCGIRQEN1bits.AGIEN0 =1;
+    //ADCGIRQEN1bits.AGIEN0 =1;
     ADC2TIMEbits.ADCEIS = 0;
     ADC2TIMEbits.ADCDIV = 1;
     ADC2TIMEbits.SAMC = 5;
@@ -92,6 +92,8 @@ void adc_config()
     /* Konfiguracja ADCGIRQENx */
     ADCGIRQEN1 = 0;                 // 0 = wyl. przerwania gdy gotowe przetwarzane danych
     ADCGIRQEN2 = 0;
+    
+    ///ADCGIRQEN1bits.AGIEN0 = 1;
     
     /* Konfiguracja ADCCSSx */
     ADCCSS1 = 0;                    // 0 bo nie u?ywane skanowanie, je?li u?ywane to trzeba wybra? wej?cia 
@@ -138,7 +140,7 @@ void adc_config()
     /* Wczesne przerwania */
     ADCEIEN1 = 0;
     ADCEIEN2 = 0;
-    //ADCEIEN1bits.EIEN0 = 1;    // wczesne przetwania dla ADC0
+    ADCEIEN1bits.EIEN0 = 1;    // wczesne przetwania dla ADC0
     
     /* WLACZENIE ADC */
     ADCCON1bits.ON = 1;
@@ -172,10 +174,10 @@ void adc_config()
     ADCCON3bits.DIGEN5 = 1;
     
     /* Wlaczenie przerwan */
-    IEC3bits.AD1RSIE = 0;
-    IPC25bits.AD1RSIP = 7;
-    IPC25bits.AD1RSIS = 1;
-    IEC3bits.AD1RSIE = 1;
+    IEC3bits.AD1GIE = 0;
+    IPC26bits.AD1G1IP = 7;
+    IPC26bits.AD1G1IS = 1;
+    IEC3bits.AD1GIE = 1;
     //asm volatile("ei");       //wymagane, ale wl. juz w 'main()'.
 }
 
@@ -195,6 +197,8 @@ void adc_read (unsigned int* ADC0_phase_V, unsigned int* ADC1_phase_U,
         unsigned int* ADC2_current, unsigned int* ADC3_phase_W,
         unsigned int* ADC4_Vbat, unsigned int* ADC5_Vbldc)
 {    
+    while(ADCDSTAT1bits.ARDY0 == 0);
+    
     (*ADC0_phase_V) = ADCDATA0;
     (*ADC1_phase_U) = ADCDATA1;
     (*ADC2_current) = ADCDATA2;

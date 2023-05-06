@@ -21,13 +21,15 @@
 
 #define EXIT_SUCCESS         0
 
+unsigned int adc0, adc1, adc2, adc3, adc4, adc5;
+
 int main() {
     
     interrupt_on();             // Wl. obslugi przerwan przez PIC32.
     pins_config();              // Konfiguracja pinów wej./wyj.
     bridge_idle_state();        // Stan jalowy wszyskich 3 faz silnika.
     adc_config();               // Konfiguracja ADC0-ADC5.
-    bridge_set_state(6);        // do testów!
+    bridge_set_state(0);        // do testów!
     buck_converter_config();    // Konfiguracja peryferiów (w tym PWM) do
                                 // sterowania przetwornica buck Vbat/Vbldc.
     buck_converter_init();      // Inicjalizacja pracy przetwornicy Vbat/Vbldc.
