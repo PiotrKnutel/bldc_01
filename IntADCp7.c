@@ -28,13 +28,7 @@ IntADCp7 ()
     IFS3bits.AD1D0IF= 0;
     adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
     current = ADC_res[2];
-    current_specified = 93;       // tymaczaowo tutaj ustalane
+    current_specified = 93;       // Tymczasowo tutaj ustalane! 93 =~ 1 A
     current_controller(current_specified, current, &next_pwm);
     buck_converter_set_pwm(next_pwm);
-    /*
-    if (PORTBbits.RB15 == 0)
-        LATBbits.LATB15 == 1;
-    else
-        LATBbits.LATB15 == 0;
-    */
 }

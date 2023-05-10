@@ -7,7 +7,7 @@
 /*
  * Konfiguracja ADC0-ADC5, dzialajacych rownoczesnie, wyzwalanych TMR1
  * z f = 10 kHz. Po zakonczeniu konwersji przez ADC, wyzwalane jest przerwanie
- * z wektorem '_ADC_URDY_VECTOR', obslugiwane przez funkcje 'IntADCp7()',
+ * z wektorem '_ADC_EARLY_VECTOR', obslugiwane przez funkcje 'IntADCp7()',
  * znajdujaca sie w pliku 'IntADCp7.c'. W 'adc_init()' TRM1 jest konfigurowany,
  * ale nie jest uruchamiany. Rozdzielczosc wszystkich uzytych ADC to 12 bitow.  
  */

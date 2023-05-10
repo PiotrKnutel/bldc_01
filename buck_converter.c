@@ -19,7 +19,7 @@
 
 /*
  * Konfiguracacja peryferiow, w tym 'Motor Control PWM 4', do sterowania
- * przetwornica buck Vbat/Vbldc.  
+ * przetwornica buck Vbat/Vbldc. Ustawienie min. dopuszcz. wypelnienia syg. PWM.  
  */
 void buck_converter_config()
 {
@@ -50,8 +50,8 @@ void buck_converter_config()
     IOCON4bits.PMOD = 0b0011; // PWM4L utrzywywane w stanie '0' (ale raczej nie potrzebne gdy PENL=0)
     IOCON4bits.FLTMOD = 0b0011;   // wyl. wej. fault
     
-    PHASE4 = 0x00F0;
-    
+    PHASE4 = 0x00F0;        // ustawienie okresu syg. PWM 0xF0 = 240 = 2 us 
+    PDC4 = 5;               // ustawienie min. warto?ci wype?enienia syg. PWM
 }
 
 /*
@@ -61,7 +61,7 @@ void buck_converter_init()
 {
     unsigned int flaga_skip_start = 0;
     
-    PDC4 = 0x0078; // PWM Genertaor Duty Cycle 0x0078=120 (polowa 240)
+    PDC4 = 0x0078;          // PWM Genertaor Duty Cycle 0x0078=120 (polowa 240)
     PTCONbits.PTEN = 1;
     
     /* TIMER 2 do PWM */
