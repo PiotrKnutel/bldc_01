@@ -39,7 +39,7 @@ void buck_converter_config()
     
     PTCONbits.PCLKDIV = 0b000; // prescaler pierwszy, 0 to 1/FSYSCLK
     
-    // gdy ITB=1 to zamiast PTPER jest u?ywane PHASE.
+    // gdy ITB=1 to zamiast PTPER jest uzywane PHASE.
     //PTPER = 0x00F0;     // min. to 0x0008; 0x00F0=240; wzor 4 na str. 44-10.
     PWMCON4bits.MTBS = 0; //wybor zrodla zegara, 0 to Primary master time base
     
@@ -51,7 +51,7 @@ void buck_converter_config()
     IOCON4bits.FLTMOD = 0b0011;   // wyl. wej. fault
     
     PHASE4 = 0x00F0;        // ustawienie okresu syg. PWM 0xF0 = 240 = 2 us 
-    PDC4 = 5;               // ustawienie min. warto?ci wype?enienia syg. PWM
+    PDC4 = 5;               // ustawienie min. wartosci wypelenienia syg. PWM
 }
 
 /*
