@@ -5,14 +5,14 @@
  * regulatora calkujacego.
  ******************************************************************************/ 
 
-#include "current_controller.h" 
+#include "current_controller.h"
 
     int current_diff;                       // uchyb regulacji
     int I_out;                              // wyjscie calki
     static int previos_I_out = 0;           // poprzednie wyj. calki
     unsigned int result;                    // obliczone wypelnienie PWM, wynik
     const int CURRENT_OFFSET = 2048;        // offset pomiaru pradu 1.65 V
-    const unsigned int Ki = 4;              // wzm. na wyj. calki = 1/(2^Ki)
+    const unsigned int Ki = 11;              // wzm. na wyj. calki = 1/(2^Ki)
     const unsigned int MAX_REF_CURRENT = 2047;  // max dozwolony prad zadany
     const unsigned int PWM_MIN = 5;         // min dozwol. wypel. PWM  2% z 240
                                             // przy f = 500 kHz, min Ton=40 ns
@@ -32,10 +32,10 @@ void current_controller(unsigned int current_ref, unsigned int current_meas,
     I_out = current_diff + previos_I_out;
     
     // ACC
-    if (I_out > 4095)
-        I_out = 4095;
-    if (I_out < -4096)
-        I_out = -4096;
+    if (I_out > 262143)
+        I_out = 262143;
+    if (I_out < -262143)
+        I_out = -262143;
     
     // zachowanie I_out dla nastepnej iteracji
     previos_I_out = I_out;

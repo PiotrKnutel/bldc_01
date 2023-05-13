@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/current_controller.c</file>
             <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/IntADCp7.c</file>
+            <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/adc.c</file>
             <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/main.c</file>
             <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/buck_converter.c</file>
             <file>file:/C:/Users/user/MPLABXProjects/bldc_01.X/current_controller.h</file>
