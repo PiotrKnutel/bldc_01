@@ -46,9 +46,9 @@ IntADCp7 ()
     if (licznik == 40000)
     {
         licznik = 0;
-        if (current_specified == 360)
+        if (current_specified == I_5A)
             current_specified = I_1A;
         else
-            current_specified =360;
+            current_specified = I_5A;
     }
 }
