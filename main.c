@@ -51,7 +51,7 @@ int main() {
     buck_converter_config();    // Konfiguracja peryferiów (w tym PWM) do
                                 // sterowania przetwornica buck Vbat/Vbldc.
     
-    //buck_converter_init();      // Inicjalizacja pracy przetwornicy Vbat/Vbldc.
+    buck_converter_init();      // Inicjalizacja pracy przetwornicy Vbat/Vbldc.
     
     adc_start_TMR1();   // Wlaczenie TMR1 do taktowania ADC, a w konsewkencji
                         // przerwan do regulatora I.
