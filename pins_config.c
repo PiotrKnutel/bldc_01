@@ -36,8 +36,8 @@ void pins_config()
     ANSELBbits.ANSB7  = 1;  // B7 jako wej. analogowe (VBLDCsens_ADC)
     
     /* Konfiguracja wej. i wyj. CAN1 */
-    TRISGbits.TRISG6  = 1;  // wej. C1RX_1
-    TRISGbits.TRISG8  = 0;  // wyj. C1TX_1
+    TRISGbits.TRISG6  = 0;  // UART 1 TX (docelowo wej. C1RX_1)
+    TRISGbits.TRISG8  = 0;  // UART 1 RX (docelowo wyj. C1TX_1)
     
     /* Konfiguracja wej. i wyj. CAN2 */
     TRISAbits.TRISA7  = 1;  // wej. C2RX_2

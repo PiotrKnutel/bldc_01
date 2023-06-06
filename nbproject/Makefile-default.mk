@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c uart.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/bridge.o.d ${OBJECTDIR}/IntADCp7.o.d ${OBJECTDIR}/current_controller.o.d ${OBJECTDIR}/buck_converter.o.d ${OBJECTDIR}/pins_config.o.d ${OBJECTDIR}/interrupt_on.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o ${OBJECTDIR}/uart.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/bridge.o.d ${OBJECTDIR}/IntADCp7.o.d ${OBJECTDIR}/current_controller.o.d ${OBJECTDIR}/buck_converter.o.d ${OBJECTDIR}/pins_config.o.d ${OBJECTDIR}/interrupt_on.o.d ${OBJECTDIR}/uart.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o ${OBJECTDIR}/uart.o
 
 # Source Files
-SOURCEFILES=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c
+SOURCEFILES=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c uart.c
 
 
 
@@ -155,6 +155,12 @@ ${OBJECTDIR}/interrupt_on.o: interrupt_on.c  .generated_files/flags/default/cdb9
 	@${RM} ${OBJECTDIR}/interrupt_on.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/interrupt_on.o.d" -o ${OBJECTDIR}/interrupt_on.o interrupt_on.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/7e15a6bc2597dc519929d2ff2eb882d97109f9cd .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/uart.o.d 
+	@${RM} ${OBJECTDIR}/uart.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 else
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/25f5b2062fbc7405c960a37b8e9551e4bccdfb84 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
@@ -203,6 +209,12 @@ ${OBJECTDIR}/interrupt_on.o: interrupt_on.c  .generated_files/flags/default/29a6
 	@${RM} ${OBJECTDIR}/interrupt_on.o.d 
 	@${RM} ${OBJECTDIR}/interrupt_on.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/interrupt_on.o.d" -o ${OBJECTDIR}/interrupt_on.o interrupt_on.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/eb7319714e162375738751bf8034ecf447548516 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/uart.o.d 
+	@${RM} ${OBJECTDIR}/uart.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 

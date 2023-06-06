@@ -8,4 +8,4 @@
 /*
  * Wlaczenie obslugi przerwan. 
  */
-void interrupt_on(void);
+void interrupt_on (void);

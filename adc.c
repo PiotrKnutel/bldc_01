@@ -25,8 +25,8 @@ void adc_config()
     unsigned int f_tmr1 = 10000;                // 10 kHz
     T1CONbits.ON = 0;                           // wyl. TRM1
     TMR1 = 0;                                   // wartosc poczatkowa TMR1
-    PR1 = takt_magistrali/256/f_tmr1 - 1;       // wartosc przepelnienia TRM1 
-    T1CONbits.TCKPS = 0b11; // prescaler taktowania TRM1 = 256
+    PR1 = takt_magistrali/8/f_tmr1 - 1;       // wartosc przepelnienia TRM1 
+    T1CONbits.TCKPS = 0b01; // prescaler taktowania TRM1 = 8
     T1CONbits.TCS = 0;      // wybor zrodla taktowania TRM1: magistarla PBCLK2 
     
     /* Konfiguracja ADC0-ADC5
@@ -57,15 +57,23 @@ void adc_config()
     
     /* Ustawienie czasu próbowania i zegara konwersji - ADCxTIME */
     /* ADCx, gdzie x to nr dedykowanego ADC */
-    ADC1TIMEbits.ADCEIS = 1;        // Wczesne przewanie ADC 1 jest generowane 1 takt zegara ADC przed ko?cem konwersji, je?li ADCEIS=8 to 8 cykli...
-    //ADC1TIMEbits.SELRES = 3;        // rozdzielczosc 3=12 bitów
-    //ADC1TIMEbits.DMAEN = 0;         // DMA 0=wy?. (tego nie rozpozanawa? kompliator)
+    //ADCGIRQEN1bits.AGIEN0 =1;
+    ADC0TIMEbits.ADCDIV = 1;
+    ADC0TIMEbits.SAMC = 5;
+    ADC0TIMEbits.ADCEIS = 0;        // Wczesne przewanie ADC 1 jest generowane 1 takt zegara ADC przed ko?cem konwersji, je?li ADCEIS=8 to 8 cykli...
+    //ADC0TIMEbits.SELRES = 3;        // rozdzielczosc 3=12 bitów
+    //ADC0TIMEbits.DMAEN = 0;         // DMA 0=wy?. (tego nie rozpozanawa? kompliator)
     ADC1TIMEbits.ADCDIV = 1;        // 1=Tad=2*Tq, dzielnik taktowania ADC
     ADC1TIMEbits.SAMC = 5;          // czas próbkowania, 0x3FF=1025*Tad, 5=5*Tad
-    //ADCGIRQEN1bits.AGIEN0 =1;
-    ADC2TIMEbits.ADCEIS = 0;
     ADC2TIMEbits.ADCDIV = 1;
     ADC2TIMEbits.SAMC = 5;
+    ADC3TIMEbits.ADCDIV = 1;
+    ADC3TIMEbits.SAMC = 5;
+    ADC4TIMEbits.ADCDIV = 1;
+    ADC4TIMEbits.SAMC = 5;
+    ADC5TIMEbits.ADCDIV = 1;
+    ADC5TIMEbits.SAMC = 5;
+    
     
     /* Ustawienie pinów jako wej?? do konkretnych ADC */
     ADCTRGMODEbits.SH0ALT = 0b11;   // AN24 (pin A4) to wej ADC0 (Vsens)
@@ -92,8 +100,7 @@ void adc_config()
     /* Konfiguracja ADCGIRQENx */
     ADCGIRQEN1 = 0;                 // 0 = wyl. przerwania gdy gotowe przetwarzane danych
     ADCGIRQEN2 = 0;
-    
-    ///ADCGIRQEN1bits.AGIEN0 = 1;
+    ADCGIRQEN1bits.AGIEN0 = 1;
     
     /* Konfiguracja ADCCSSx */
     ADCCSS1 = 0;                    // 0 bo nie u?ywane skanowanie, je?li u?ywane to trzeba wybra? wej?cia 
@@ -140,7 +147,16 @@ void adc_config()
     /* Wczesne przerwania */
     ADCEIEN1 = 0;
     ADCEIEN2 = 0;
-    ADCEIEN1bits.EIEN0 = 1;    // wczesne przetwania dla ADC0
+    //ADCEIEN1bits.EIEN0 = 0;    // wczesne przetwania dla ADC0
+    
+    /* Wlaczenie przerwan */
+    IEC3bits.AD1D0IE = 0;
+    IPC26bits.AD1D0IP = 7;
+    IPC26bits.AD1D0IS = 1;
+    IEC3bits.AD1D0IE = 1;
+    
+//    ADCCON2bits.ADCEIOVR = 1;
+    asm volatile("ei");       //wymagane, ale wl. juz w 'main()'.
     
     /* WLACZENIE ADC */
     ADCCON1bits.ON = 1;
@@ -172,13 +188,6 @@ void adc_config()
     ADCCON3bits.DIGEN3 = 1;
     ADCCON3bits.DIGEN4 = 1;
     ADCCON3bits.DIGEN5 = 1;
-    
-    /* Wlaczenie przerwan */
-    IEC3bits.AD1GIE = 0;
-    IPC26bits.AD1G1IP = 7;
-    IPC26bits.AD1G1IS = 1;
-    IEC3bits.AD1GIE = 1;
-    //asm volatile("ei");       //wymagane, ale wl. juz w 'main()'.
 }
 
 /*
@@ -196,9 +205,7 @@ void adc_start_TMR1()
 void adc_read (unsigned int* ADC0_phase_V, unsigned int* ADC1_phase_U,
         unsigned int* ADC2_current, unsigned int* ADC3_phase_W,
         unsigned int* ADC4_Vbat, unsigned int* ADC5_Vbldc)
-{    
-    while(ADCDSTAT1bits.ARDY0 == 0);
-    
+{   
     (*ADC0_phase_V) = ADCDATA0;
     (*ADC1_phase_U) = ADCDATA1;
     (*ADC2_current) = ADCDATA2;

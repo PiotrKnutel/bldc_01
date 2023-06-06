@@ -26,6 +26,7 @@
 //#pragma config UPLLFSEL =	FREQ_12MHZ
 
 #pragma config FDMTEN = OFF
+#pragma config FWDTEN = OFF
 #pragma config WDTSPGM = STOP
 #pragma config DMTCNT = DMT31
 //#pragma config FSOSCEN = OFF
@@ -34,3 +35,7 @@
 //#pragma config IOL1WAY = OFF
 //#pragma config FCKSM = CSECME
 #pragma config JTAGEN = OFF
+#pragma config DEBUG = ON
+#pragma config CP = OFF
+#pragma config IESO  = OFF
+
