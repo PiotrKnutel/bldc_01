@@ -19,33 +19,36 @@
 
 #include <stdio.h>  // tymaczasowo dla printf()
 
-unsigned int ADC_res[6];        // tablica na wyniki ADC0-ADC5
-unsigned int current;           // przepisana z wyników ADC wartosc pradu 
-extern volatile unsigned int current_specified; // prad zadany, bez uwzglednienia offsetu
-unsigned int next_pwm;          // nowe wypelnienie syg. PWM sterujacego przetwornica buck Vbat/Vbldc
+unsigned int ADC_res[6];        // Tablica na wyniki ADC0-ADC5.
+unsigned int current;           // Przepisana z wyników ADC wartosc pradu. 
+extern volatile unsigned int current_specified; // Prad zadany,
+                                                // bez uwzglednienia offsetu.
+unsigned int next_pwm;          // Nowe wypelnienie syg. PWM sterujacego
+                                // przetwornica buck Vbat/Vbldc.
 
-extern volatile unsigned int licznik;
+extern volatile unsigned int licznik;  // TYLKO DO TESTOW! okresowa zamana stanu
 
 void __attribute__((vector(_ADC_DATA0_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
 {
+    ADCDATA0;                   // Odczyt rejestru z wynikami ADC0, konieczny
+                                // do poprawnego wyl. flagi przerwania.
+    IFS3bits.AD1D0IF= 0;        // Czyszczenie flagi przerwania 'ADC Data 0'.
+    IFS2bits.AD1IF= 0;          // Czyszczenie flagi przerwania 'ADC global'.
     
-    //ADCDSTAT1bits.ARDY0 = 0;
-	//IFS3bits.AD1GIF = 0;           // wyl. flagi przerwania
-    ADCDATA0;
-    IFS3bits.AD1D0IF= 0;
-    IFS2bits.AD1IF= 0;
-    
+    /* DO TESTOW! Zmiana stanu na pinie G8 z f przerwania. */
     if (LATGbits.LATG8 == 0)
         LATGbits.LATG8 = 1;
     else
         LATGbits.LATG8 = 0;
     
-//    adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4], &ADC_res[5]);
-//    current = ADC_res[2];
-//    //current_specified = 87;       // Tymczasowo tutaj ustalane! 93 =~ 1 A
-//    current_controller(current_specified, current, &next_pwm);
-//    buck_converter_set_pwm(next_pwm);
+    adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4],
+            &ADC_res[5]);
+    current = ADC_res[2];
+    current_controller(current_specified, current, &next_pwm);
+    buck_converter_set_pwm(next_pwm);
+    
+    /* DO TESTOW! Okresowa zmiana pradu zadanego. */
     licznik++;
     if (licznik >= 10000)
     {

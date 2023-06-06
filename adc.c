@@ -147,7 +147,6 @@ void adc_config()
     /* Wczesne przerwania */
     ADCEIEN1 = 0;
     ADCEIEN2 = 0;
-    //ADCEIEN1bits.EIEN0 = 0;    // wczesne przetwania dla ADC0
     
     /* Wlaczenie przerwan */
     IEC3bits.AD1D0IE = 0;
@@ -155,13 +154,12 @@ void adc_config()
     IPC26bits.AD1D0IS = 1;
     IEC3bits.AD1D0IE = 1;
     
-//    ADCCON2bits.ADCEIOVR = 1;
-    asm volatile("ei");       //wymagane, ale wl. juz w 'main()'.
+    //asm volatile("ei");       //wymagane, ale wl. juz w 'main()'.
     
     /* WLACZENIE ADC */
     ADCCON1bits.ON = 1;
     
-    /* Czekanie na stabilno?? napi?cia ref. */
+    /* Czekanie na stabilnosc napiecia ref. */
     while (!ADCCON2bits.BGVRRDY);
     while (ADCCON2bits.REFFLT);
     
