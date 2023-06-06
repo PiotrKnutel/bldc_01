@@ -16,8 +16,7 @@
 #include "buck_converter_int.h"
 #include "current_controller.h"
 #include "current_values_definitions.h"
-
-#include <stdio.h>  // tymaczasowo dla printf()
+#include "uart.h"
 
 unsigned int ADC_res[6];        // Tablica na wyniki ADC0-ADC5.
 unsigned int current;           // Przepisana z wyników ADC wartosc pradu. 
@@ -27,6 +26,7 @@ unsigned int next_pwm;          // Nowe wypelnienie syg. PWM sterujacego
                                 // przetwornica buck Vbat/Vbldc.
 
 extern volatile unsigned int licznik;  // TYLKO DO TESTOW! okresowa zamana stanu
+extern volatile int flag_uart_tx;
 
 void __attribute__((vector(_ADC_DATA0_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
@@ -53,6 +53,7 @@ IntADCp7 ()
     if (licznik >= 10000)
     {
         licznik = 0;
+        flag_uart_tx = 1;
         if (current_specified == I_5A) 
         {
             current_specified = I_1A;

@@ -14,4 +14,9 @@ void uart_init ();
  * Redefinicja funkcji z 'stdio.h'. Umozliwia wysylanie tekstu przez UART1 za
  * pomoca funkcji 'printf()'.
  */
-void _mon_putc (char);
+//void _mon_putc (char);
+
+
+void uart_write_char(char c);
+
+void uart_write_text(const char* tx_data);

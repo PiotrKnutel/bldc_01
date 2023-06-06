@@ -18,34 +18,41 @@
 #include "current_values_definitions.h"
 #include "uart.h"
 
-#include <stdio.h>      // tymczasowo dla printf()
-#include <xc.h>         // tymczasowo dla _CP0_SET_COUNT()
+//#include <stdio.h>      // tymczasowo dla printf()
+//#include <xc.h>         // tymczasowo dla _CP0_SET_COUNT()
 
 #define EXIT_SUCCESS         0
 
 volatile unsigned int current_specified;
 volatile unsigned int licznik;
+volatile int flag_uart_tx;
+
+const char msg_1A[3]    = "1 \0";
+const char msg_5A[3]    = "5 \0";
+const char msg_n[3]     = "n \0";
+const char msg_start[10] = "\n\n\rStart.\0";
 
 
-void delay_us(unsigned int us){
-    us *= (120000000 / 1000000) / 2;
-    _CP0_SET_COUNT(0);
-    while (us > _CP0_GET_COUNT());
-}
-void delay_ms(unsigned int ms){
-    delay_us(ms * 1000);
-}
+//void delay_us(unsigned int us){
+//    us *= (120000000 / 1000000) / 2;
+//    _CP0_SET_COUNT(0);
+//    while (us > _CP0_GET_COUNT());
+//}
+//void delay_ms(unsigned int ms){
+//    delay_us(ms * 1000);
+//}
 
 
 int main() {
     licznik = 0;
+    flag_uart_tx = 0;
     
     WDTCONbits.ON = 0; // wyl. watchdog timer, mozna uzywac tego bitu jesli FWDTEN = 0
     
     interrupt_on();             // Wl. obslugi przerwan przez PIC32.
     pins_config();              // Konfiguracja pinów wej./wyj.
     bridge_idle_state();        // Stan jalowy wszyskich 3 faz silnika.
-    //uart_init();                // Konfiguracja UART 1, do debugowania.
+    uart_init();                // Konfiguracja UART 1, do debugowania.
     adc_config();               // Konfiguracja ADC0-ADC5.
     
     buck_converter_config();    // Konfiguracja peryferiów (w tym PWM) do
@@ -57,24 +64,30 @@ int main() {
                         // przerwan do regulatora I.
     
     current_specified = I_1A;
+
+    uart_write_text(msg_start);
     
     while(1)
     {
-        for (int i=0; i<5; i++)
+        for (int i=0; i<15; i++)
         {
             asm volatile ("nop");
         }
-        if (current_specified == 87 && PORTGbits.RG6 == 0) 
+        if (flag_uart_tx)
         {
-            LATGbits.LATG6 = 1;
-        } 
-        else if (current_specified == 434 && PORTGbits.RG6 == 1) 
-        {
-            LATGbits.LATG6 = 0;
-        } 
-        else 
-        {
-            asm volatile ("nop");
+            flag_uart_tx = 0;
+            if (current_specified == I_5A)
+            {
+                uart_write_text(msg_5A);
+            }
+            else if (current_specified == I_1A)
+            {
+                uart_write_text(msg_1A);
+            }
+            else
+            {
+                uart_write_text(msg_n);
+            }
         }
     }
     return (EXIT_SUCCESS);
