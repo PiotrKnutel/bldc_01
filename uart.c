@@ -26,7 +26,7 @@ void uart_init()
     U1MODE = 0;                         // Set UARTx off prior to setting it up
     U1MODEbits.CLKSEL = 0b00;           // wybor zrodla zegara, 01 = SYSCLK;
     U1MODEbits.BRGH = 1;                // High Baud Rate Enable bit. 0 = Standard Speed Mode - 16x baud clock enables
-    U1BRG = (60000000 / (4*4800))-1; // Baud Rate (datasheet)
+    U1BRG = (60000000 / (4*115200))-1; // Baud Rate (datasheet)
     U1STA = 0;                          // Disable the TX and RX pins, clear all flags
     U1STAbits.UTXEN = 1;                // UARTx transmitter is enabled
     U1STAbits.URXEN = 1;                // UARTx receiver is enabled

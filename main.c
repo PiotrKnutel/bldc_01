@@ -17,6 +17,7 @@
 #include "interrupt_on.h"
 #include "current_values_definitions.h"
 #include "uart.h"
+#include <stdio.h>
 
 //#include <stdio.h>      // tymczasowo dla printf()
 //#include <xc.h>         // tymczasowo dla _CP0_SET_COUNT()
@@ -26,11 +27,20 @@
 volatile unsigned int current_specified;
 volatile unsigned int licznik;
 volatile int flag_uart_tx;
+extern volatile int flag_commutation_detected;
+extern unsigned int colector_1;
+extern int nr_det_1;
+extern int nr_det_2;
 
 const char msg_1A[3]    = "1 \0";
 const char msg_5A[3]    = "5 \0";
 const char msg_n[3]     = "n \0";
 const char msg_start[10] = "\n\n\rStart.\0";
+const char msg_detected[3] = "d ";
+const char msg_no_detected[3] = "x ";
+char msg_col_1[5];
+int a;
+int b;
 
 
 //void delay_us(unsigned int us){
@@ -46,6 +56,10 @@ const char msg_start[10] = "\n\n\rStart.\0";
 int main() {
     licznik = 0;
     flag_uart_tx = 0;
+    flag_commutation_detected = 0;
+    
+    nr_det_1 = 0;
+    nr_det_2 = 0;
     
     WDTCONbits.ON = 0; // wyl. watchdog timer, mozna uzywac tego bitu jesli FWDTEN = 0
     
@@ -63,31 +77,47 @@ int main() {
     adc_start_TMR1();   // Wlaczenie TMR1 do taktowania ADC, a w konsewkencji
                         // przerwan do regulatora I.
     
-    current_specified = I_1A;
+    current_specified = I_5A;
 
     uart_write_text(msg_start);
     
     while(1)
     {
-        for (int i=0; i<15; i++)
+        for (int i=0; i<5; i++)
         {
             asm volatile ("nop");
         }
         if (flag_uart_tx)
         {
             flag_uart_tx = 0;
-            if (current_specified == I_5A)
+//            if (current_specified == I_5A)
+//            {
+//                uart_write_text(msg_5A);
+//            }
+//            else if (current_specified == I_1A)
+//            {
+//                uart_write_text(msg_1A);
+//            }
+//            else
+//            {
+//                uart_write_text(msg_n);
+//            }
+            if (flag_commutation_detected)
             {
-                uart_write_text(msg_5A);
-            }
-            else if (current_specified == I_1A)
-            {
-                uart_write_text(msg_1A);
+                //uart_write_text(msg_detected);
+                //colector_1 = 2;
+                //sprintf(msg_col_1, "%d ", 2);
+                //uart_write_text(msg_col_1);
+                a = nr_det_2 / 10;
+                b = nr_det_2 % 10;
+                nr_det_1 = 0;
+                nr_det_2 = 0;
+                uart_write_char(0x30 + a);
+                uart_write_char(0x30 + b);
+                uart_write_char(' ');
             }
             else
-            {
-                uart_write_text(msg_n);
-            }
+                uart_write_text(msg_no_detected);
         }
     }
     return (EXIT_SUCCESS);

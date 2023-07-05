@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c uart.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c uart.c commutation.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o ${OBJECTDIR}/uart.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/bridge.o.d ${OBJECTDIR}/IntADCp7.o.d ${OBJECTDIR}/current_controller.o.d ${OBJECTDIR}/buck_converter.o.d ${OBJECTDIR}/pins_config.o.d ${OBJECTDIR}/interrupt_on.o.d ${OBJECTDIR}/uart.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/commutation.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/adc.o.d ${OBJECTDIR}/bridge.o.d ${OBJECTDIR}/IntADCp7.o.d ${OBJECTDIR}/current_controller.o.d ${OBJECTDIR}/buck_converter.o.d ${OBJECTDIR}/pins_config.o.d ${OBJECTDIR}/interrupt_on.o.d ${OBJECTDIR}/uart.o.d ${OBJECTDIR}/commutation.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o ${OBJECTDIR}/uart.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/adc.o ${OBJECTDIR}/bridge.o ${OBJECTDIR}/IntADCp7.o ${OBJECTDIR}/current_controller.o ${OBJECTDIR}/buck_converter.o ${OBJECTDIR}/pins_config.o ${OBJECTDIR}/interrupt_on.o ${OBJECTDIR}/uart.o ${OBJECTDIR}/commutation.o
 
 # Source Files
-SOURCEFILES=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c uart.c
+SOURCEFILES=main.c adc.c bridge.c IntADCp7.c current_controller.c buck_converter.c pins_config.c interrupt_on.c uart.c commutation.c
 
 
 
@@ -161,6 +161,12 @@ ${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/7e15a6bc2597dc519929
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
+${OBJECTDIR}/commutation.o: commutation.c  .generated_files/flags/default/218c9ae8ea615b70ee162739ab917e3471bef410 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/commutation.o.d 
+	@${RM} ${OBJECTDIR}/commutation.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG   -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/commutation.o.d" -o ${OBJECTDIR}/commutation.o commutation.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
 else
 ${OBJECTDIR}/main.o: main.c  .generated_files/flags/default/25f5b2062fbc7405c960a37b8e9551e4bccdfb84 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
 	@${MKDIR} "${OBJECTDIR}" 
@@ -215,6 +221,12 @@ ${OBJECTDIR}/uart.o: uart.c  .generated_files/flags/default/eb7319714e1623757387
 	@${RM} ${OBJECTDIR}/uart.o.d 
 	@${RM} ${OBJECTDIR}/uart.o 
 	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/uart.o.d" -o ${OBJECTDIR}/uart.o uart.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
+	
+${OBJECTDIR}/commutation.o: commutation.c  .generated_files/flags/default/7b53cd6f344446c452d04885200fab258ecf0aa7 .generated_files/flags/default/c0d105b5fb21a2d6a1a1391cf0024b1662afb238
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/commutation.o.d 
+	@${RM} ${OBJECTDIR}/commutation.o 
+	${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -fno-common -MP -MMD -MF "${OBJECTDIR}/commutation.o.d" -o ${OBJECTDIR}/commutation.o commutation.c    -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mdfp="${DFP_DIR}"  
 	
 endif
 
