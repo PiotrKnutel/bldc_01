@@ -1,9 +1,13 @@
 /*******************************************************************************
- * File: bridge_int.h
+ * File: bridge_commut.h
  * 
  * Funkcja dotyczaca sterowania mostkiem 3-fazowym MOSFET, udostepniona
- * do 'IntADCp7.c'.
+ * do 'commutation.c'.
  ******************************************************************************/
+
+/* Stan wysokiej impedancji wszyskich trzech faz mostka MOSFET.
+ * Mozliwosc uzycia jako argumentu funkcji 'bridge_set_state()'. */
+#define BRIDGE_IDLE_STATE_HIGH_Z    0
 
 /*
  * Ustawianie MOSFETów mostka (stanów komutacji) wedlug podanego nr stanu.

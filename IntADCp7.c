@@ -12,7 +12,6 @@
 
 #include "p32mk1024mcf064.h"
 #include "adc_int.h"
-#include "bridge_int.h"
 #include "buck_converter_int.h"
 #include "current_controller.h"
 #include "current_values_definitions.h"

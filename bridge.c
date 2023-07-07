@@ -1,12 +1,12 @@
 /*******************************************************************************
  * File: bridge.c
  * 
- * Funkcje i zmienne do sterowania mostkiem trójfazowym silnika.
+ * Sterowanie mostka trójfazowego MOSFET silnika BLDC.
  ******************************************************************************/
 
 #include "p32mk1024mcf064.h"
 #include "bridge_main.h"
-#include "bridge_int.h"
+#include "bridge_commut.h"
 
 /* Definicje rejestrów powizanych ze stanami logicznymi pinów sterujacych
  * moskiem 3-fazowym silnika. */
@@ -41,7 +41,10 @@ void bridge_idle_state()
  */
 void bridge_set_state(int state) {
     switch (state) {
+        default:
+            /* Idzie do "case 0". */
         case 0:
+            /* Stan jalowy, stan wysokiej impedancji dla wszystkich faz. */ 
             PIN_U_PMOS = 1; 
             PIN_V_PMOS = 1;
             PIN_W_PMOS = 1;
@@ -50,9 +53,9 @@ void bridge_set_state(int state) {
             PIN_W_NMOS = 0;
             break;
         case 1:
-            PIN_U_PMOS = 0; 
+            PIN_U_PMOS = 1; 
             PIN_V_PMOS = 1;
-            PIN_W_PMOS = 1;
+            PIN_W_PMOS = 0;
             PIN_U_NMOS = 0;
             PIN_V_NMOS = 1;
             PIN_W_NMOS = 0;
@@ -62,12 +65,12 @@ void bridge_set_state(int state) {
             PIN_V_PMOS = 1;
             PIN_W_PMOS = 1;
             PIN_U_NMOS = 0;
-            PIN_V_NMOS = 0;
-            PIN_W_NMOS = 1;
+            PIN_V_NMOS = 1;
+            PIN_W_NMOS = 0;
             break;
         case 3:
-            PIN_U_PMOS = 1; 
-            PIN_V_PMOS = 0;
+            PIN_U_PMOS = 0; 
+            PIN_V_PMOS = 1;
             PIN_W_PMOS = 1;
             PIN_U_NMOS = 0;
             PIN_V_NMOS = 0;
@@ -77,14 +80,14 @@ void bridge_set_state(int state) {
             PIN_U_PMOS = 1; 
             PIN_V_PMOS = 0;
             PIN_W_PMOS = 1;
-            PIN_U_NMOS = 1;
+            PIN_U_NMOS = 0;
             PIN_V_NMOS = 0;
-            PIN_W_NMOS = 0;
+            PIN_W_NMOS = 1;
             break;
         case 5:
             PIN_U_PMOS = 1; 
-            PIN_V_PMOS = 1;
-            PIN_W_PMOS = 0;
+            PIN_V_PMOS = 0;
+            PIN_W_PMOS = 1;
             PIN_U_NMOS = 1;
             PIN_V_NMOS = 0;
             PIN_W_NMOS = 0;
@@ -93,18 +96,9 @@ void bridge_set_state(int state) {
             PIN_U_PMOS = 1; 
             PIN_V_PMOS = 1;
             PIN_W_PMOS = 0;
-            PIN_U_NMOS = 0;
-            PIN_V_NMOS = 1;
-            PIN_W_NMOS = 0;
-            break;
-        default:
-            /* Stan jalowy */
-            PIN_U_PMOS = 1; 
-            PIN_V_PMOS = 1;
-            PIN_W_PMOS = 1;
-            PIN_U_NMOS = 0;
+            PIN_U_NMOS = 1;
             PIN_V_NMOS = 0;
             PIN_W_NMOS = 0;
-            break;         
+            break;       
     }
 }

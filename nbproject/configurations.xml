@@ -14,11 +14,11 @@
       <itemPath>pins_config_main.h</itemPath>
       <itemPath>pins_config_buck_conv.h</itemPath>
       <itemPath>bridge_main.h</itemPath>
-      <itemPath>bridge_int.h</itemPath>
       <itemPath>interrupt_on.h</itemPath>
       <itemPath>uart.h</itemPath>
       <itemPath>current_values_definitions.h</itemPath>
       <itemPath>commutation.h</itemPath>
+      <itemPath>bridge_commut.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"

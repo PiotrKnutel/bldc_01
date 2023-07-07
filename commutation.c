@@ -2,6 +2,8 @@
  * File: commutation.c
  */
 
+#include "bridge_commut.h"
+
 /* Poziomy faz dla kolejnych stanow polozenia wirnika.
  * 
  * Nr stanu |                    |
@@ -282,30 +284,11 @@ int commutation_delay(const unsigned int *adc_phase_N)
 
 void set_state(int state)
 {
-    switch (state)
-    {
-        case 0:
-            
-            break;
-        case 1:
-            
-            break;
-        case 2:
-            
-            break;
-        case 3:
-            
-            break;
-        case 4:
-            
-            break;
-        case 5:
-            
-            break;
-        default:
-            
-            break;
-    }
+    bridge_set_state(state + 1);
+    /* "state + 1" poniewaz, zakres stanow dla tej funkcji obejmuje 1..6, a nie
+     * 0..5. Wartosc '0' to stan wysokiej impedancji wszyskich trzech faz.
+     * Zabezpieczenie przed niedozwolonymi wartosciami jest wewnatrz funkcji 
+     * 'bridge_set_state()'. */
 }
 
 void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
