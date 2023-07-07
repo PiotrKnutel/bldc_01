@@ -2,6 +2,6 @@
  * File: commutation.h
  */
 
-void commutation_detect(unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* ADC_W);
+void commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, const unsigned int* ADC_W);
 
-void commutation(unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* ADC_W);
+void commutation(const unsigned int* ADC_V, const unsigned int* ADC_U, const unsigned int* ADC_W);

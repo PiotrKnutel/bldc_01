@@ -2,13 +2,32 @@
  * File: commutation.c
  */
 
-#define STATE_NO_DETECTED       0
-#define STATE_DETECTED          1
-#define UP                      0
-#define DOWN                    1
+/* Poziomy faz dla kolejnych stanow polozenia wirnika.
+ * 
+ * Nr stanu |                    |
+ * (state)  |  0  1  2  3  4  5  |
+ * ---------|--------------------|
+ *          |    ______          |
+ *          |   /      \         |
+ * Faza U   |  /        \        |
+ *          | /          \______ |
+ *          |          ______    |
+ *          |         /      \   |
+ * Faza V   |        /        \  |
+ *          | ______/          \ |
+ *          | ___            ___ |
+ *          |    \          /    |
+ * Faza W   |     \        /     |
+ *          |      \______/      |
+ *          |                    |
+ */
 
-#define STATUS_ALREADY          0
-#define STATUS_NOT_READY_YET    1
+
+#define STATE_NO_DETECTED           0
+#define STATE_DETECTED              1
+
+#define STATUS_ALREADY              0
+#define STATUS_NOT_READY_YET        1
 
 #define TASK_NOT_SPECIFIED          0
 #define TASK_CHECKING_STATE         1
@@ -16,8 +35,7 @@
 #define TASK_DELAY                  3
 #define TASK_COMMUTATION_NOW        4
 
-#define V_MID                       4095
-
+const unsigned int V_MID                    = 2047;
 const unsigned int HIGH_RANGE_DOWN_LIMIT    = 2457;     // 60% * 4095
 const unsigned int LOW_RANGE_UP_LIMIT       = 1638;     // 40% * 4095
 const unsigned int V_MID_UP                 = 2252;     // 55% * 4095
@@ -25,12 +43,13 @@ const unsigned int V_MID_DOWN               = 1843;     // 45% * 4095
 
 volatile int flag_commutation_detected;
 unsigned int colector_1;
-const unsigned int integral_area = 1000;
-int state;
+const unsigned int FULL_CONTAINER = 10000;
+volatile int state;
 int nr_det_1;
 int nr_det_2;
 int direction;
 volatile int task;
+
 
 
 int detect_first_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
@@ -85,7 +104,7 @@ int detect_first_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
     return status;
 }
 
-int detect_second_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
+int detect_second_state(unsigned int adc_phase_L, unsigned int adc_phase_N,
         unsigned int adc_phase_H)
 {
     static unsigned int previous_adc_phase_N = 0;
@@ -138,7 +157,7 @@ int detect_second_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
 }
 
 
-void commutation_detect(unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* ADC_W)
+void commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, const unsigned int* ADC_W)
 {
     unsigned int adc_phase_L;
     unsigned int adc_phase_N;
@@ -173,37 +192,9 @@ void commutation_detect(unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* 
     }
 }
 
-void set_state(int state)
-{
-    switch (state)
-    {
-        case 0:
-            
-            break;
-        case 1:
-            
-            break;
-        case 2:
-            
-            break;
-        case 3:
-            
-            break;
-        case 4:
-            
-            break;
-        case 5:
-            
-            break;
-        default:
-            
-            break;
-    }
-}
 
-
-int checking_state(int unsigned *adc_phase_L, unsigned int *adc_phase_N,
-        unsigned int *adc_phase_H)
+int checking_state(const int unsigned *adc_phase_L, const unsigned int *adc_phase_N,
+        const unsigned int *adc_phase_H)
 {
     int status = STATUS_NOT_READY_YET;
     static unsigned int previous_adc_phase_N = V_MID;
@@ -256,37 +247,84 @@ int checking_state(int unsigned *adc_phase_L, unsigned int *adc_phase_N,
 }
 
 
-int detect_crossing_zero(unsigned int *adc_phase_N,
+int detect_crossing_zero(const unsigned int *adc_phase_N,
         unsigned int previous_adc_phase_N)
 {
-    if (*adc_phase_N > previous_adc_phase_N)
+    if (state % 2)  // dla stanow 1, 3, 5, kiedy to napi?cie na fazie N opada
+    {
+        if (*adc_phase_N < previous_adc_phase_N)
+            return STATUS_ALREADY;
+        else
+            return STATUS_NOT_READY_YET;
+    }
+    else            // dla stanow 0, 2, 4, kiedy to napi?cie na fazie N rosnie
+    {
+        if (*adc_phase_N > previous_adc_phase_N)
+            return STATUS_ALREADY;
+        else
+            return STATUS_NOT_READY_YET;        
+    }
+}
+
+
+int commutation_delay(const unsigned int *adc_phase_N)
+{
+    static unsigned int container = 0;
+    container += *adc_phase_N;
+    if (container >= FULL_CONTAINER)
+    {
+        container = 0;
         return STATUS_ALREADY;
+    }
     else
         return STATUS_NOT_READY_YET;
 }
 
-
-int commutation_delay()
+void set_state(int state)
 {
-    
+    switch (state)
+    {
+        case 0:
+            
+            break;
+        case 1:
+            
+            break;
+        case 2:
+            
+            break;
+        case 3:
+            
+            break;
+        case 4:
+            
+            break;
+        case 5:
+            
+            break;
+        default:
+            
+            break;
+    }
 }
 
-
-void commutation (unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* ADC_W)
+void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
+        const unsigned int* ADC_W)
 {
     /* Tablice do posredniego wskazywania wartosci ADC faz "fizycznych"
      * (V, U, W), przez wskazniki faz "logicznych" (N, H, L).
      * Kolejnosc w tablicach odpowiada kolejnosci wystepowania stanow faz.
      * Oznaczenia: N - aktualna faza w stanie wysokiej impedancji,
      * H - faza zwarta do V_BLDC, L - faza zwarta do GND. */
-    unsigned int* phase_N_sequence[6] = 
+    const unsigned int *phase_N_sequence[6] = 
         { ADC_U, ADC_W, ADC_V, ADC_U, ADC_W, ADC_V };
-    unsigned int* phase_H_sequence[6] = 
+    const unsigned int *phase_H_sequence[6] = 
         { ADC_W, ADC_U, ADC_U, ADC_V, ADC_V, ADC_W };
-    unsigned int* const phase_L_sequence[6] = 
+    const unsigned int *phase_L_sequence[6] = 
         { ADC_V, ADC_V, ADC_W, ADC_W, ADC_U, ADC_U };
     
-    unsigned int *phase_N, *phase_H, *phase_L;
+    const unsigned int *phase_N, *phase_H, *phase_L;
+    
     static unsigned int previous_phase_N = V_MID;
      
     /* Wskazywanie na wyniki ADC, dla trzech faz, odpowiednio dla obecnego
@@ -324,7 +362,7 @@ void commutation (unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* ADC_W)
             
         case TASK_DELAY:
             task = TASK_DELAY;
-            if (commutation_delay() == STATUS_NOT_READY_YET)
+            if (commutation_delay(phase_N) == STATUS_NOT_READY_YET)
                 break;
             
         case TASK_COMMUTATION_NOW:
