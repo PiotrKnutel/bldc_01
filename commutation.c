@@ -4,6 +4,19 @@
 
 #define STATE_NO_DETECTED       0
 #define STATE_DETECTED          1
+#define UP                      0
+#define DOWN                    1
+
+#define STATUS_ALREADY          0
+#define STATUS_NOT_READY_YET    1
+
+#define TASK_NOT_SPECIFIED          0
+#define TASK_CHECKING_STATE         1
+#define TASK_CROSSING_ZERO_DET      2
+#define TASK_DELAY                  3
+#define TASK_COMMUTATION_NOW        4
+
+#define V_MID                       4095
 
 const unsigned int HIGH_RANGE_DOWN_LIMIT    = 2457;     // 60% * 4095
 const unsigned int LOW_RANGE_UP_LIMIT       = 1638;     // 40% * 4095
@@ -16,6 +29,8 @@ const unsigned int integral_area = 1000;
 int state;
 int nr_det_1;
 int nr_det_2;
+int direction;
+volatile int task;
 
 
 int detect_first_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
@@ -34,8 +49,12 @@ int detect_first_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
             if (adc_phase_N > previous_adc_phase_N)
             {
                 i++;
+                //!! zapomniano o i=0;
                 if (i >= 3)
+                {
                     flag_N_is_growing = 1;
+                    i = 0;
+                }
             }
             else
             {
@@ -82,8 +101,12 @@ int detect_second_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
             if (adc_phase_N < previous_adc_phase_N)
             {
                 i++;
+                //!! zapomniano o i=0;
                 if (i >= 3)
+                {
                     flag_N_is_falling = 1;
+                    i = 0;
+                }
             }
             else
             {
@@ -178,21 +201,140 @@ void set_state(int state)
     }
 }
 
-void commutation(unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* ADC_W)
+
+int checking_state(int unsigned *adc_phase_L, unsigned int *adc_phase_N,
+        unsigned int *adc_phase_H)
 {
-    const unsigned int* phase_N_sequence[6] = {ADC_U, ADC_W, ADC_V, ADC_U, ADC_W, ADC_V };
-    unsigned int *phase_N;
-    static unsigned int summator = 0;
+    int status = STATUS_NOT_READY_YET;
+    static unsigned int previous_adc_phase_N = V_MID;
+    int flag_N_should_falling = state % 2;              // state = 0..5
+    static int i = 0;
     
-    /*phase_N = phase_N_sequence[state];
-    
-    summator += *phase_N;
-    if (summator >= integral_area)
+    if (*adc_phase_H > HIGH_RANGE_DOWN_LIMIT)
     {
-        state = ++state;
-        if(state == 7)
-            state = 0;
-        summator = 0;
+        if (*adc_phase_L < LOW_RANGE_UP_LIMIT)
+        {
+            if (flag_N_should_falling)
+            {
+                if (*adc_phase_N < previous_adc_phase_N)
+                {
+                    i++;
+                    if (i >= 3)
+                    {
+                        status = STATUS_ALREADY;
+                        i = 0;
+                    }
+                }
+                else
+                {
+                    status = STATUS_NOT_READY_YET;
+                    i = 0;
+                }
+            }
+            else
+            {
+                if (*adc_phase_N > previous_adc_phase_N)
+                {
+                    i++;
+                    if (i >= 3)
+                    {
+                        status = STATUS_ALREADY;
+                        i = 0;
+                    }
+                }
+                else
+                {
+                    status = STATUS_NOT_READY_YET;
+                    i = 0;
+                }                
+            }
+        }
     }
-     */
+    previous_adc_phase_N = *adc_phase_N;
+    
+    return status;
+}
+
+
+int detect_crossing_zero(unsigned int *adc_phase_N,
+        unsigned int previous_adc_phase_N)
+{
+    if (*adc_phase_N > previous_adc_phase_N)
+        return STATUS_ALREADY;
+    else
+        return STATUS_NOT_READY_YET;
+}
+
+
+int commutation_delay()
+{
+    
+}
+
+
+void commutation (unsigned int* ADC_V, unsigned int* ADC_U, unsigned int* ADC_W)
+{
+    /* Tablice do posredniego wskazywania wartosci ADC faz "fizycznych"
+     * (V, U, W), przez wskazniki faz "logicznych" (N, H, L).
+     * Kolejnosc w tablicach odpowiada kolejnosci wystepowania stanow faz.
+     * Oznaczenia: N - aktualna faza w stanie wysokiej impedancji,
+     * H - faza zwarta do V_BLDC, L - faza zwarta do GND. */
+    unsigned int* phase_N_sequence[6] = 
+        { ADC_U, ADC_W, ADC_V, ADC_U, ADC_W, ADC_V };
+    unsigned int* phase_H_sequence[6] = 
+        { ADC_W, ADC_U, ADC_U, ADC_V, ADC_V, ADC_W };
+    unsigned int* const phase_L_sequence[6] = 
+        { ADC_V, ADC_V, ADC_W, ADC_W, ADC_U, ADC_U };
+    
+    unsigned int *phase_N, *phase_H, *phase_L;
+    static unsigned int previous_phase_N = V_MID;
+     
+    /* Wskazywanie na wyniki ADC, dla trzech faz, odpowiednio dla obecnego
+     * polozenia silnika. Zmienna 'state' moze wynosic 0..5! */
+    phase_N = phase_N_sequence[state];
+    phase_H = phase_H_sequence[state];
+    phase_L = phase_L_sequence[state];
+    
+    
+    /* W ponizszym 'switch', wyrazenia 'break' celowo sa w warunkach, a nie
+     * w ka?dym 'case', by program przechodzil do nastepnego zadania, jezeli
+     * poprzednie zadanie zakonczylo sie sukcesem. 
+     * Do zmiennej 'task' jest przypisywany nr aktualnie wykonywanego zadania,
+     * by nastepne wywolanie tej funkcji w przerwaniu, posiadalo informacje,
+     * ktore zadanie kontynuowac.
+     * W ostatnim zadaniu 'TASK_COMMUTATION_NOW',zmiennej 'task' jest
+     * przypisywana wartosc zadania, od ktorego ma sie rozpoczac nowy cykl.
+     * Ustawiany jest te? nr nastepnego stanu i jest wywolywana funkcja do
+     * komutacji, czyli przelaczenia mostka MOSFET. */
+    switch (task)
+    {
+        case TASK_NOT_SPECIFIED:
+            
+        case TASK_CHECKING_STATE:
+            task = TASK_CHECKING_STATE;
+            if (checking_state(phase_L, phase_N, phase_H) == 
+                    STATUS_NOT_READY_YET)
+                break;
+            
+        case TASK_CROSSING_ZERO_DET:
+            task = TASK_CROSSING_ZERO_DET; // dla przyszlego przerwania
+            if (detect_crossing_zero(phase_N, previous_phase_N) == 
+                    STATUS_NOT_READY_YET)
+                break;
+            
+        case TASK_DELAY:
+            task = TASK_DELAY;
+            if (commutation_delay() == STATUS_NOT_READY_YET)
+                break;
+            
+        case TASK_COMMUTATION_NOW:
+            state++;
+            if(state == 6)
+                state = 0;
+            set_state(state);
+            task = TASK_CHECKING_STATE;
+            break;
+    }
+    
+    previous_phase_N = *phase_N;
 }
