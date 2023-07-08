@@ -31,6 +31,9 @@
 #define STATUS_ALREADY              0
 #define STATUS_NOT_READY_YET        1
 
+#define STAT_COMMUT_DETECTED        1
+#define STAT_COMMUT_NOT_DETECTED    0
+
 #define TASK_NOT_SPECIFIED          0
 #define TASK_CHECKING_STATE         1
 #define TASK_CROSSING_ZERO_DET      2
@@ -43,7 +46,6 @@ const unsigned int LOW_RANGE_UP_LIMIT       = 1638;     // 40% * 4095
 const unsigned int V_MID_UP                 = 2252;     // 55% * 4095
 const unsigned int V_MID_DOWN               = 1843;     // 45% * 4095
 
-volatile int flag_commutation_detected;
 unsigned int colector_1;
 const unsigned int FULL_CONTAINER = 10000;
 volatile int state;
@@ -159,7 +161,7 @@ int detect_second_state(unsigned int adc_phase_L, unsigned int adc_phase_N,
 }
 
 
-void commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, const unsigned int* ADC_W)
+int commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, const unsigned int* ADC_W)
 {
     unsigned int adc_phase_L;
     unsigned int adc_phase_N;
@@ -167,6 +169,7 @@ void commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, co
     
     static int flag_detected_1_phase = 0;
     static unsigned int adc_1_colector = 0;
+    int status = STAT_COMMUT_NOT_DETECTED;
     
     if (!flag_detected_1_phase)
     {
@@ -185,13 +188,15 @@ void commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, co
         nr_det_2++;
         if (detect_second_state(adc_phase_L, adc_phase_N, adc_phase_H))   // second state
         {
-            flag_commutation_detected = 1;
+            status = STAT_COMMUT_DETECTED;
             flag_detected_1_phase = 0;
             colector_1 = adc_1_colector;
             adc_1_colector = 0;
             state = 2;
         }    
     }
+    
+    return status; 
 }
 
 
@@ -250,18 +255,18 @@ int checking_state(const int unsigned *adc_phase_L, const unsigned int *adc_phas
 
 
 int detect_crossing_zero(const unsigned int *adc_phase_N,
-        unsigned int previous_adc_phase_N)
+        unsigned int LIMIT)
 {
-    if (state % 2)  // dla stanow 1, 3, 5, kiedy to napi?cie na fazie N opada
+    if (state % 2)  // dla stanow 1, 3, 5, kiedy to napiecie na fazie N opada
     {
-        if (*adc_phase_N < previous_adc_phase_N)
+        if (*adc_phase_N < LIMIT)
             return STATUS_ALREADY;
         else
             return STATUS_NOT_READY_YET;
     }
     else            // dla stanow 0, 2, 4, kiedy to napi?cie na fazie N rosnie
     {
-        if (*adc_phase_N > previous_adc_phase_N)
+        if (*adc_phase_N > LIMIT)
             return STATUS_ALREADY;
         else
             return STATUS_NOT_READY_YET;        
@@ -330,25 +335,33 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
     switch (task)
     {
         case TASK_NOT_SPECIFIED:
+            /* Przechodzi do nastepnego zadnia. */
             
         case TASK_CHECKING_STATE:
+            /* Sprwadzenie wystapienia stanu polozenia wirnika, okreslonego
+             * przez zminna 'int state'. */
             task = TASK_CHECKING_STATE;
             if (checking_state(phase_L, phase_N, phase_H) == 
                     STATUS_NOT_READY_YET)
                 break;
             
         case TASK_CROSSING_ZERO_DET:
+            /* Sprawdza, czy napiecie na fazie neutralnej przkroczylo V_MID.
+             * Od 'state' zalezy, czy wykrywane jest przekroczenie "od gory",
+             * czy "od dolu". */
             task = TASK_CROSSING_ZERO_DET; // dla przyszlego przerwania
-            if (detect_crossing_zero(phase_N, previous_phase_N) == 
+            if (detect_crossing_zero(phase_N, V_MID) == 
                     STATUS_NOT_READY_YET)
                 break;
             
         case TASK_DELAY:
+            /* Opoznienie po przekroczeniu V_MID, przed komutacja. */
             task = TASK_DELAY;
             if (commutation_delay(phase_N) == STATUS_NOT_READY_YET)
                 break;
             
         case TASK_COMMUTATION_NOW:
+            /* Wykonanie komutacji. */
             state++;
             if(state == 6)
                 state = 0;
@@ -357,5 +370,5 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
             break;
     }
     
-    previous_phase_N = *phase_N;
+    previous_phase_N = *phase_N;    // obecne napiecie na 
 }

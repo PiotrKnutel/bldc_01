@@ -27,7 +27,7 @@ unsigned int next_pwm;          // Nowe wypelnienie syg. PWM sterujacego
 
 extern volatile unsigned int licznik;  // TYLKO DO TESTOW! okresowa zamana stanu
 extern volatile int flag_uart_tx;
-extern volatile int flag_commutation_detected;
+volatile int flag_commutation_detected;
 
 void __attribute__((vector(_ADC_DATA0_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
@@ -38,10 +38,10 @@ IntADCp7 ()
     IFS2bits.AD1IF= 0;          // Czyszczenie flagi przerwania 'ADC global'.
     
     /* DO TESTOW! Zmiana stanu na pinie G8 z f przerwania. */
-    if (LATGbits.LATG8 == 0)
-        LATGbits.LATG8 = 1;
-    else
-        LATGbits.LATG8 = 0;
+//    if (LATGbits.LATG8 == 0)
+//        LATGbits.LATG8 = 1;
+//    else
+//        LATGbits.LATG8 = 0;
     
     adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4],
             &ADC_res[5]);
@@ -51,7 +51,10 @@ IntADCp7 ()
     
     /* Komutacja */
     if (!flag_commutation_detected)
-        commutation_detect(&ADC_res[0], &ADC_res[1], &ADC_res[3]);
+    {
+        if (commutation_detect(&ADC_res[0], &ADC_res[1], &ADC_res[3]))
+            flag_commutation_detected = 1;
+    }       
     else
         commutation(&ADC_res[0], &ADC_res[1], &ADC_res[3]);
     
