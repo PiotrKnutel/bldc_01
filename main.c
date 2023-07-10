@@ -25,12 +25,12 @@
 #define EXIT_SUCCESS         0
 
 volatile unsigned int current_specified;
-volatile unsigned int licznik;
-volatile int flag_uart_tx;
+extern volatile unsigned int licznik;
+extern volatile int flag_uart_tx;
 extern volatile int flag_commutation_detected;
 extern unsigned int colector_1;
-extern int nr_det_1;
-extern int nr_det_2;
+extern volatile int nr_det_1;
+extern volatile int nr_det_2;
 
 const char msg_1A[3]    = "1 \0";
 const char msg_5A[3]    = "5 \0";
@@ -77,7 +77,7 @@ int main() {
     adc_start_TMR1();   // Wlaczenie TMR1 do taktowania ADC, a w konsewkencji
                         // przerwan do regulatora I.
     
-    current_specified = I_5A;
+    current_specified = I_2A;
 
     uart_write_text(msg_start);
     
@@ -87,7 +87,7 @@ int main() {
         {
             asm volatile ("nop");
         }
-        if (flag_uart_tx)
+        if (flag_uart_tx == 1)
         {
             flag_uart_tx = 0;
 //            if (current_specified == I_5A)
@@ -102,7 +102,7 @@ int main() {
 //            {
 //                uart_write_text(msg_n);
 //            }
-            if (flag_commutation_detected)
+            if (flag_commutation_detected == 1)
             {
                 //uart_write_text(msg_detected);
                 //colector_1 = 2;

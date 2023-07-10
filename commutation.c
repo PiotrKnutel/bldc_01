@@ -47,10 +47,10 @@ const unsigned int V_MID_UP                 = 2252;     // 55% * 4095
 const unsigned int V_MID_DOWN               = 1843;     // 45% * 4095
 
 unsigned int colector_1;
-const unsigned int FULL_CONTAINER = 10000;
+const unsigned int FULL_CONTAINER = 500;
 volatile int state;
-int nr_det_1;
-int nr_det_2;
+volatile int nr_det_1;
+volatile int nr_det_2;
 int direction;
 volatile int task;
 
@@ -193,6 +193,7 @@ int commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, con
             colector_1 = adc_1_colector;
             adc_1_colector = 0;
             state = 2;
+            task = 3;
         }    
     }
     
@@ -277,14 +278,30 @@ int detect_crossing_zero(const unsigned int *adc_phase_N,
 int commutation_delay(const unsigned int *adc_phase_N)
 {
     static unsigned int container = 0;
-    container += *adc_phase_N;
-    if (container >= FULL_CONTAINER)
+    if (state % 2)
     {
-        container = 0;
-        return STATUS_ALREADY;
+        // N opdada
+        container = container + V_MID - *adc_phase_N;
+        if (container >= FULL_CONTAINER)
+        {
+            container = 0;
+            return STATUS_ALREADY;
+        }
+        else
+            return STATUS_NOT_READY_YET;
     }
-    else
-        return STATUS_NOT_READY_YET;
+    else 
+    {
+        // N narasta
+        container = container + *adc_phase_N - V_MID;
+        if (container >= FULL_CONTAINER)
+        {
+            container = 0;
+            return STATUS_ALREADY;
+        }
+        else
+            return STATUS_NOT_READY_YET;        
+    }
 }
 
 void set_state(int state)
@@ -334,6 +351,9 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
      * komutacji, czyli przelaczenia mostka MOSFET. */
     switch (task)
     {
+        default:
+            /* Przechodzi do nastepnego zadnia. */
+            
         case TASK_NOT_SPECIFIED:
             /* Przechodzi do nastepnego zadnia. */
             
@@ -366,7 +386,8 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
             if(state == 6)
                 state = 0;
             set_state(state);
-            task = TASK_CHECKING_STATE;
+            //task = TASK_CHECKING_STATE;
+            task = TASK_CROSSING_ZERO_DET;
             break;
     }
     

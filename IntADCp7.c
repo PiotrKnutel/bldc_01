@@ -25,8 +25,8 @@ extern volatile unsigned int current_specified; // Prad zadany,
 unsigned int next_pwm;          // Nowe wypelnienie syg. PWM sterujacego
                                 // przetwornica buck Vbat/Vbldc.
 
-extern volatile unsigned int licznik;  // TYLKO DO TESTOW! okresowa zamana stanu
-extern volatile int flag_uart_tx;
+volatile unsigned int licznik;  // TYLKO DO TESTOW! okresowa zamana stanu
+volatile int flag_uart_tx;
 volatile int flag_commutation_detected;
 
 void __attribute__((vector(_ADC_DATA0_VECTOR), interrupt(IPL7SRS), nomips16)) 
