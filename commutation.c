@@ -53,6 +53,9 @@ volatile int nr_det_1;
 volatile int nr_det_2;
 int direction;
 volatile int task;
+volatile int liczba_cykli;
+volatile int licznik_cykli;
+extern volatile int flag_uart_tx;
 
 
 
@@ -176,7 +179,7 @@ int commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, con
         adc_phase_L = *ADC_V;
         adc_phase_N = *ADC_U;
         adc_phase_H = *ADC_W;
-        nr_det_1++;
+        //nr_det_1++;
         flag_detected_1_phase = detect_first_state(adc_phase_L, adc_phase_N, adc_phase_H);
     }
     else
@@ -184,14 +187,14 @@ int commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, con
         adc_phase_L = *ADC_V;
         adc_phase_N = *ADC_W;
         adc_phase_H = *ADC_U;
-        adc_1_colector += adc_phase_N;
-        nr_det_2++;
+        //adc_1_colector += adc_phase_N;
+        //nr_det_2++;
         if (detect_second_state(adc_phase_L, adc_phase_N, adc_phase_H))   // second state
         {
             status = STAT_COMMUT_DETECTED;
             flag_detected_1_phase = 0;
-            colector_1 = adc_1_colector;
-            adc_1_colector = 0;
+            //colector_1 = adc_1_colector;
+            //adc_1_colector = 0;
             state = 2;
             task = 3;
         }    
@@ -377,6 +380,7 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
         case TASK_DELAY:
             /* Opoznienie po przekroczeniu V_MID, przed komutacja. */
             task = TASK_DELAY;
+            licznik_cykli++;
             if (commutation_delay(phase_N) == STATUS_NOT_READY_YET)
                 break;
             
@@ -388,6 +392,9 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
             set_state(state);
             //task = TASK_CHECKING_STATE;
             task = TASK_CROSSING_ZERO_DET;
+            //flag_uart_tx = 1;
+            liczba_cykli = licznik_cykli;
+            licznik_cykli = 0;
             break;
     }
     

@@ -28,6 +28,7 @@ unsigned int next_pwm;          // Nowe wypelnienie syg. PWM sterujacego
 volatile unsigned int licznik;  // TYLKO DO TESTOW! okresowa zamana stanu
 volatile int flag_uart_tx;
 volatile int flag_commutation_detected;
+volatile int flag_liczba_cykli;
 
 void __attribute__((vector(_ADC_DATA0_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
@@ -65,6 +66,7 @@ IntADCp7 ()
     {
         licznik = 0;
         flag_uart_tx = 1;
+        flag_liczba_cykli = 1;
     /*    
         if (current_specified == I_5A) 
         {

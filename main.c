@@ -31,6 +31,9 @@ extern volatile int flag_commutation_detected;
 extern unsigned int colector_1;
 extern volatile int nr_det_1;
 extern volatile int nr_det_2;
+extern volatile int liczba_cykli;
+extern volatile int licznik_cykli;
+extern volatile int flag_liczba_cykli;
 
 const char msg_1A[3]    = "1 \0";
 const char msg_5A[3]    = "5 \0";
@@ -41,6 +44,8 @@ const char msg_no_detected[3] = "x ";
 char msg_col_1[5];
 int a;
 int b;
+int c;
+int d;
 
 
 //void delay_us(unsigned int us){
@@ -60,6 +65,9 @@ int main() {
     
     nr_det_1 = 0;
     nr_det_2 = 0;
+    liczba_cykli = 0;
+    licznik_cykli = 0;
+    flag_liczba_cykli = 0;
     
     WDTCONbits.ON = 0; // wyl. watchdog timer, mozna uzywac tego bitu jesli FWDTEN = 0
     
@@ -104,17 +112,33 @@ int main() {
 //            }
             if (flag_commutation_detected == 1)
             {
-                //uart_write_text(msg_detected);
-                //colector_1 = 2;
-                //sprintf(msg_col_1, "%d ", 2);
-                //uart_write_text(msg_col_1);
-                a = nr_det_2 / 10;
-                b = nr_det_2 % 10;
-                nr_det_1 = 0;
-                nr_det_2 = 0;
-                uart_write_char(0x30 + a);
-                uart_write_char(0x30 + b);
-                uart_write_char(' ');
+                if (flag_liczba_cykli == 1)
+                {
+                    //uart_write_text(msg_detected);
+                    //colector_1 = 2;
+                    //sprintf(msg_col_1, "%d ", 2);
+                    //uart_write_text(msg_col_1);
+
+                    //a = nr_det_2 / 10;
+                    //b = nr_det_2 % 10;
+                    nr_det_1 = 0;
+                    nr_det_2 = 0;
+    //                uart_write_char(0x30 + a);
+    //                uart_write_char(0x30 + b);
+    //                uart_write_char(' ');
+                    if (liczba_cykli < 100)
+                    {
+                    c = liczba_cykli / 10;
+                    d = liczba_cykli % 10;
+                    liczba_cykli = 0;
+                    uart_write_char(0x30 + c);
+                    uart_write_char(0x30 + d);
+                    uart_write_char(' ');
+                    }
+                    else
+                        uart_write_char('s');
+                    flag_liczba_cykli = 0;
+                }
             }
             else
                 uart_write_text(msg_no_detected);
