@@ -10,7 +10,28 @@
 
 const unsigned int MAX_TX_DATA_LENGTH = 9;  // MAX= 9, sprawdz. eksperymentalnie 
 unsigned int j;
+volatile char rx_buff[RX_BUFF_LEN];
+volatile int rx_buff_counter;
+volatile int flag_uart_rx;
 
+void __attribute__((vector(_UART1_RX_VECTOR), interrupt(IPL6SRS), nomips16)) 
+UART1_RX_interrupt ()
+{
+    IFS1bits.U1RXIF = 0;
+    IFS1bits.U1TXIF = 0;
+    //uart5_write_text("a");
+    while (U1STAbits.URXDA)
+    {
+        //uart5_write_text("1");
+        if (rx_buff_counter > RX_BUFF_LEN-1)
+            rx_buff_counter = 0;
+        rx_buff[rx_buff_counter] = U1RXREG;
+        rx_buff_counter++;
+    }
+    flag_uart_rx = 1;
+    IFS1bits.U1RXIF = 0;
+    IFS1bits.U1TXIF = 0;
+}
 
 /*
  * Inicjalizacja UART 1, do debugowania.
@@ -18,7 +39,10 @@ unsigned int j;
 
 void uart_init()
 {
-    int SYS_FREQ = 120000000; // 120 MHz   
+    int SYS_FREQ = 120000000; // 120 MHz
+    
+    rx_buff_counter = 0;
+    flag_uart_rx = 0;
     
     U1RXR = 0b1010;         // powiazanie UART1 RX z pinem G8 (RPG8)
     RPG6R = 0b00001;        // powiazanie UART1 TX z pinem G6 (U1TX)
@@ -32,6 +56,17 @@ void uart_init()
     U1STAbits.URXEN = 1;                // UARTx receiver is enabled
     U1MODEbits.PDSEL = 0;               // Parity and Data Selection bits. 0 = 8-bit data, no parity
     U1MODEbits.STSEL = 0;               // Stop Selection bit. 0 = 1 Stop bit
+    
+    /* Przerwania od odbioru */
+    IEC1bits.U1RXIE = 0;
+    IPC9bits.U1RXIP = 6;
+    IPC9bits.U1RXIS = 1;
+    
+    U1STAbits.URXISEL = 0b00; // przerwanie gdy odebrano co najmnie 1B
+    
+    IFS1bits.U1RXIF = 0;
+    IEC1bits.U1RXIE = 1;
+    
     U1MODEbits.ON = 1;                  // Turn on the UARTx peripheral
 }
 
@@ -64,3 +99,15 @@ void uart_write_text(const char *tx_data)
         j++;
     }
 }
+
+
+//unsigned int uart_read_char(void) {
+//    while (!U1STAbits.URXDA); //wait rx data available
+//    
+//    if(U1STAbits.OERR)
+//    {
+//        U1STAbits.OERR = 0; //clear overrun error manually
+//    }
+//    
+//    return U1RXREG;
+//}

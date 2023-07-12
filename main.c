@@ -22,7 +22,8 @@
 //#include <stdio.h>      // tymczasowo dla printf()
 //#include <xc.h>         // tymczasowo dla _CP0_SET_COUNT()
 
-#define EXIT_SUCCESS         0
+#define EXIT_SUCCESS            0
+#define TEXT_LEN                30
 
 volatile unsigned int current_specified;
 extern volatile unsigned int licznik;
@@ -47,16 +48,11 @@ int b;
 int c;
 int d;
 
-
-//void delay_us(unsigned int us){
-//    us *= (120000000 / 1000000) / 2;
-//    _CP0_SET_COUNT(0);
-//    while (us > _CP0_GET_COUNT());
-//}
-//void delay_ms(unsigned int ms){
-//    delay_us(ms * 1000);
-//}
-
+char text[TEXT_LEN];
+extern volatile int flag_uart_rx;
+extern volatile char rx_buff[RX_BUFF_LEN];
+const char start_text[] = " Start \n\r\0";
+const char p_text[] = "p\0";
 
 int main() {
     licznik = 0;
@@ -95,6 +91,8 @@ int main() {
         {
             asm volatile ("nop");
         }
+        
+        /* Wyslanie po magistralii UART */
         if (flag_uart_tx == 1)
         {
             flag_uart_tx = 0;
@@ -142,6 +140,18 @@ int main() {
             }
             else
                 uart_write_text(msg_no_detected);
+        }
+        
+        /* Odbior po UART */
+        if (flag_uart_rx == 1)
+        {
+            uart_write_text(p_text);
+            for (int i=0; i < 5; i++)
+            {
+                uart_write_char(rx_buff[i]);
+            }
+            //uart_write_text("e \n\r");
+            flag_uart_rx = 0;
         }
     }
     return (EXIT_SUCCESS);
