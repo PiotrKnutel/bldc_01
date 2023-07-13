@@ -28,7 +28,8 @@ unsigned int next_pwm;          // Nowe wypelnienie syg. PWM sterujacego
 volatile unsigned int licznik;  // TYLKO DO TESTOW! okresowa zamana stanu
 volatile int flag_uart_tx;
 volatile int flag_commutation_detected;
-volatile int flag_liczba_cykli;
+volatile int licz_a;
+volatile int flaga_rozruch;
 
 void __attribute__((vector(_ADC_DATA0_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
@@ -39,10 +40,12 @@ IntADCp7 ()
     IFS2bits.AD1IF= 0;          // Czyszczenie flagi przerwania 'ADC global'.
     
     /* DO TESTOW! Zmiana stanu na pinie G8 z f przerwania. */
-//    if (LATGbits.LATG8 == 0)
-//        LATGbits.LATG8 = 1;
-//    else
-//        LATGbits.LATG8 = 0;
+    if (LATGbits.LATG8 == 0)
+        LATGbits.LATG8 = 1;
+    else
+        LATGbits.LATG8 = 0;
+    
+    flag_uart_tx == 1;
     
     adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4],
             &ADC_res[5]);
@@ -59,23 +62,20 @@ IntADCp7 ()
     else
         commutation(&ADC_res[0], &ADC_res[1], &ADC_res[3]);
     
-    /* DO TESTOW! Okresowa zmiana pradu zadanego. */
-    
+    /* DO rozruchu silnika */
     licznik++;
     if (licznik >= 10000)
     {
         licznik = 0;
-        flag_uart_tx = 1;
-        flag_liczba_cykli = 1;
-    /*    
-        if (current_specified == I_5A) 
+        if (flaga_rozruch == 0)
         {
-            current_specified = I_1A;
-        } 
-        else 
-        {
-            current_specified = I_5A;
+            if (flag_commutation_detected)
+                licz_a++;
+            if (licz_a > 3)
+            {
+                flaga_rozruch = 1;
+                current_specified = I_0_4A;
+            }
         }
-    */
     }
 }

@@ -53,52 +53,64 @@ void bridge_set_state(int state) {
             PIN_W_NMOS = 0;
             break;
         case 1:
+            PIN_U_NMOS = 0;
+            PIN_W_NMOS = 0;
+            
             PIN_U_PMOS = 1; 
             PIN_V_PMOS = 1;
+            
             PIN_W_PMOS = 0;
-            PIN_U_NMOS = 0;
             PIN_V_NMOS = 1;
-            PIN_W_NMOS = 0;
             break;
         case 2:
-            PIN_U_PMOS = 0; 
-            PIN_V_PMOS = 1;
-            PIN_W_PMOS = 1;
             PIN_U_NMOS = 0;
-            PIN_V_NMOS = 1;
             PIN_W_NMOS = 0;
-            break;
-        case 3:
-            PIN_U_PMOS = 0; 
-            PIN_V_PMOS = 1;
+            
             PIN_W_PMOS = 1;
+            PIN_V_PMOS = 1;
+            
+            PIN_U_PMOS = 0;
+            PIN_V_NMOS = 1;
+            break;
+        case 3: 
             PIN_U_NMOS = 0;
             PIN_V_NMOS = 0;
+            
+            PIN_V_PMOS = 1;
+            PIN_W_PMOS = 1;
+            
+            PIN_U_PMOS = 0;
             PIN_W_NMOS = 1;
             break;
         case 4:
-            PIN_U_PMOS = 1; 
-            PIN_V_PMOS = 0;
-            PIN_W_PMOS = 1;
             PIN_U_NMOS = 0;
             PIN_V_NMOS = 0;
+            
+            PIN_U_PMOS = 1; 
+            PIN_W_PMOS = 1;
+            
+            PIN_V_PMOS = 0;
             PIN_W_NMOS = 1;
             break;
         case 5:
-            PIN_U_PMOS = 1; 
-            PIN_V_PMOS = 0;
-            PIN_W_PMOS = 1;
-            PIN_U_NMOS = 1;
             PIN_V_NMOS = 0;
             PIN_W_NMOS = 0;
+            
+            PIN_U_PMOS = 1; 
+            PIN_W_PMOS = 1;
+            
+            PIN_V_PMOS = 0;
+            PIN_U_NMOS = 1;
             break;
         case 6:
-            PIN_U_PMOS = 1; 
-            PIN_V_PMOS = 1;
-            PIN_W_PMOS = 0;
-            PIN_U_NMOS = 1;
             PIN_V_NMOS = 0;
             PIN_W_NMOS = 0;
+            
+            PIN_U_PMOS = 1; 
+            PIN_V_PMOS = 1;
+            
+            PIN_W_PMOS = 0;
+            PIN_U_NMOS = 1;
             break;       
     }
 }

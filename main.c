@@ -30,11 +30,6 @@ extern volatile unsigned int licznik;
 extern volatile int flag_uart_tx;
 extern volatile int flag_commutation_detected;
 extern unsigned int colector_1;
-extern volatile int nr_det_1;
-extern volatile int nr_det_2;
-extern volatile int liczba_cykli;
-extern volatile int licznik_cykli;
-extern volatile int flag_liczba_cykli;
 
 const char msg_1A[3]    = "1 \0";
 const char msg_5A[3]    = "5 \0";
@@ -42,28 +37,20 @@ const char msg_n[3]     = "n \0";
 const char msg_start[10] = "\n\n\rStart.\0";
 const char msg_detected[3] = "d ";
 const char msg_no_detected[3] = "x ";
-char msg_col_1[5];
-int a;
-int b;
-int c;
-int d;
 
 char text[TEXT_LEN];
-extern volatile int flag_uart_rx;
 extern volatile char rx_buff[RX_BUFF_LEN];
 const char start_text[] = " Start \n\r\0";
-const char p_text[] = "p\0";
+extern volatile int licz_a;
+extern volatile int flaga_rozruch;
+extern volatile int state;
 
 int main() {
     licznik = 0;
     flag_uart_tx = 0;
     flag_commutation_detected = 0;
-    
-    nr_det_1 = 0;
-    nr_det_2 = 0;
-    liczba_cykli = 0;
-    licznik_cykli = 0;
-    flag_liczba_cykli = 0;
+    licz_a = 0;
+    flaga_rozruch = 0;
     
     WDTCONbits.ON = 0; // wyl. watchdog timer, mozna uzywac tego bitu jesli FWDTEN = 0
     
@@ -81,7 +68,7 @@ int main() {
     adc_start_TMR1();   // Wlaczenie TMR1 do taktowania ADC, a w konsewkencji
                         // przerwan do regulatora I.
     
-    current_specified = I_2A;
+    current_specified = I_1A;
 
     uart_write_text(msg_start);
     
@@ -96,63 +83,17 @@ int main() {
         if (flag_uart_tx == 1)
         {
             flag_uart_tx = 0;
-//            if (current_specified == I_5A)
-//            {
-//                uart_write_text(msg_5A);
-//            }
-//            else if (current_specified == I_1A)
-//            {
-//                uart_write_text(msg_1A);
-//            }
-//            else
-//            {
-//                uart_write_text(msg_n);
-//            }
             if (flag_commutation_detected == 1)
             {
-                if (flag_liczba_cykli == 1)
-                {
-                    //uart_write_text(msg_detected);
-                    //colector_1 = 2;
-                    //sprintf(msg_col_1, "%d ", 2);
-                    //uart_write_text(msg_col_1);
-
-                    //a = nr_det_2 / 10;
-                    //b = nr_det_2 % 10;
-                    nr_det_1 = 0;
-                    nr_det_2 = 0;
-    //                uart_write_char(0x30 + a);
-    //                uart_write_char(0x30 + b);
-    //                uart_write_char(' ');
-                    if (liczba_cykli < 100)
-                    {
-                    c = liczba_cykli / 10;
-                    d = liczba_cykli % 10;
-                    liczba_cykli = 0;
-                    uart_write_char(0x30 + c);
-                    uart_write_char(0x30 + d);
-                    uart_write_char(' ');
-                    }
-                    else
-                        uart_write_char('s');
-                    flag_liczba_cykli = 0;
-                }
+                uart_write_char(0x30 + state);
             }
             else
-                uart_write_text(msg_no_detected);
-        }
-        
-        /* Odbior po UART */
-        if (flag_uart_rx == 1)
-        {
-            uart_write_text(p_text);
-            for (int i=0; i < 5; i++)
             {
-                uart_write_char(rx_buff[i]);
+                uart_write_text(msg_no_detected);
             }
-            //uart_write_text("e \n\r");
-            flag_uart_rx = 0;
+            //uart_write_char(' ');
         }
     }
+    
     return (EXIT_SUCCESS);
 }

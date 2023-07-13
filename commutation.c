@@ -40,6 +40,10 @@
 #define TASK_DELAY                  3
 #define TASK_COMMUTATION_NOW        4
 
+#define V_MID_V                     2037
+#define V_MID_U                     2062
+#define V_MID_W                     2046 //46
+
 const unsigned int V_MID                    = 2047;
 const unsigned int HIGH_RANGE_DOWN_LIMIT    = 2457;     // 60% * 4095
 const unsigned int LOW_RANGE_UP_LIMIT       = 1638;     // 40% * 4095
@@ -47,16 +51,11 @@ const unsigned int V_MID_UP                 = 2252;     // 55% * 4095
 const unsigned int V_MID_DOWN               = 1843;     // 45% * 4095
 
 unsigned int colector_1;
-const unsigned int FULL_CONTAINER = 500;
+const unsigned int FULL_CONTAINER = 750;
 volatile int state;
-volatile int nr_det_1;
-volatile int nr_det_2;
 int direction;
 volatile int task;
-volatile int liczba_cykli;
-volatile int licznik_cykli;
 extern volatile int flag_uart_tx;
-
 
 
 int detect_first_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
@@ -278,13 +277,13 @@ int detect_crossing_zero(const unsigned int *adc_phase_N,
 }
 
 
-int commutation_delay(const unsigned int *adc_phase_N)
+int commutation_delay(const unsigned int *adc_phase_N, unsigned int v_mid)
 {
     static unsigned int container = 0;
     if (state % 2)
     {
         // N opdada
-        container = container + V_MID - *adc_phase_N;
+        container = container + v_mid - *adc_phase_N;
         if (container >= FULL_CONTAINER)
         {
             container = 0;
@@ -296,7 +295,7 @@ int commutation_delay(const unsigned int *adc_phase_N)
     else 
     {
         // N narasta
-        container = container + *adc_phase_N - V_MID;
+        container = container + *adc_phase_N - v_mid;
         if (container >= FULL_CONTAINER)
         {
             container = 0;
@@ -331,9 +330,14 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
     const unsigned int *phase_L_sequence[6] = 
         { ADC_V, ADC_V, ADC_W, ADC_W, ADC_U, ADC_U };
     
+    const unsigned int V_MID_for_phases[3] = { V_MID_U, V_MID_W, V_MID_V };
+    
     const unsigned int *phase_N, *phase_H, *phase_L;
     
-    static unsigned int previous_phase_N = V_MID;
+    unsigned int v_mid;
+    int select_v_mid;
+    
+    //static unsigned int previous_phase_N = V_MID;
      
     /* Wskazywanie na wyniki ADC, dla trzech faz, odpowiednio dla obecnego
      * polozenia silnika. Zmienna 'state' moze wynosic 0..5! */
@@ -341,6 +345,8 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
     phase_H = phase_H_sequence[state];
     phase_L = phase_L_sequence[state];
     
+    select_v_mid = state % 3;
+    v_mid = V_MID_for_phases[select_v_mid];
     
     /* W ponizszym 'switch', wyrazenia 'break' celowo sa w warunkach, a nie
      * w ka?dym 'case', by program przechodzil do nastepnego zadania, jezeli
@@ -373,15 +379,13 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
              * Od 'state' zalezy, czy wykrywane jest przekroczenie "od gory",
              * czy "od dolu". */
             task = TASK_CROSSING_ZERO_DET; // dla przyszlego przerwania
-            if (detect_crossing_zero(phase_N, V_MID) == 
-                    STATUS_NOT_READY_YET)
+            if (detect_crossing_zero(phase_N, v_mid) == STATUS_NOT_READY_YET)
                 break;
             
         case TASK_DELAY:
             /* Opoznienie po przekroczeniu V_MID, przed komutacja. */
             task = TASK_DELAY;
-            licznik_cykli++;
-            if (commutation_delay(phase_N) == STATUS_NOT_READY_YET)
+            if (commutation_delay(phase_N, v_mid) == STATUS_NOT_READY_YET)
                 break;
             
         case TASK_COMMUTATION_NOW:
@@ -392,11 +396,8 @@ void commutation (const unsigned int* ADC_V, const unsigned int* ADC_U,
             set_state(state);
             //task = TASK_CHECKING_STATE;
             task = TASK_CROSSING_ZERO_DET;
-            //flag_uart_tx = 1;
-            liczba_cykli = licznik_cykli;
-            licznik_cykli = 0;
             break;
     }
     
-    previous_phase_N = *phase_N;    // obecne napiecie na 
+    //previous_phase_N = *phase_N;    // obecne napiecie na 
 }
