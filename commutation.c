@@ -42,7 +42,7 @@
 
 #define V_MID_V                     2037
 #define V_MID_U                     2062
-#define V_MID_W                     2046 //46
+#define V_MID_W                     2046
 
 const unsigned int V_MID                    = 2047;
 const unsigned int HIGH_RANGE_DOWN_LIMIT    = 2457;     // 60% * 4095
@@ -74,7 +74,6 @@ int detect_first_state(int unsigned adc_phase_L, unsigned int adc_phase_N,
             if (adc_phase_N > previous_adc_phase_N)
             {
                 i++;
-                //!! zapomniano o i=0;
                 if (i >= 3)
                 {
                     flag_N_is_growing = 1;
@@ -126,7 +125,6 @@ int detect_second_state(unsigned int adc_phase_L, unsigned int adc_phase_N,
             if (adc_phase_N < previous_adc_phase_N)
             {
                 i++;
-                //!! zapomniano o i=0;
                 if (i >= 3)
                 {
                     flag_N_is_falling = 1;
@@ -170,7 +168,7 @@ int commutation_detect(const unsigned int* ADC_V, const unsigned int* ADC_U, con
     unsigned int adc_phase_H;
     
     static int flag_detected_1_phase = 0;
-    static unsigned int adc_1_colector = 0;
+    //static unsigned int adc_1_colector = 0;
     int status = STAT_COMMUT_NOT_DETECTED;
     
     if (!flag_detected_1_phase)

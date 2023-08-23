@@ -80,19 +80,19 @@ int main() {
         }
         
         /* Wyslanie po magistralii UART */
-        if (flag_uart_tx == 1)
-        {
-            flag_uart_tx = 0;
-            if (flag_commutation_detected == 1)
-            {
-                uart_write_char(0x30 + state);
-            }
-            else
-            {
-                uart_write_text(msg_no_detected);
-            }
-            //uart_write_char(' ');
-        }
+//        if (flag_uart_tx == 1)
+//        {
+//            flag_uart_tx = 0;
+//            if (flag_commutation_detected == 1)
+//            {
+//                uart_write_char(0x30 + state);
+//            }
+//            else
+//            {
+//                uart_write_text(msg_no_detected);
+//            }
+//            uart_write_char(' ');
+//        }
     }
     
     return (EXIT_SUCCESS);

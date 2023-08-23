@@ -30,6 +30,7 @@ volatile int flag_uart_tx;
 volatile int flag_commutation_detected;
 volatile int licz_a;
 volatile int flaga_rozruch;
+extern int state;
 
 void __attribute__((vector(_ADC_DATA0_VECTOR), interrupt(IPL7SRS), nomips16)) 
 IntADCp7 ()
@@ -45,7 +46,7 @@ IntADCp7 ()
     else
         LATGbits.LATG8 = 0;
     
-    flag_uart_tx == 1;
+    //flag_uart_tx == 1;
     
     adc_read(&ADC_res[0], &ADC_res[1], &ADC_res[2], &ADC_res[3], &ADC_res[4],
             &ADC_res[5]);
@@ -61,6 +62,8 @@ IntADCp7 ()
     }       
     else
         commutation(&ADC_res[0], &ADC_res[1], &ADC_res[3]);
+    
+    uart_write_char(0x30 + state);
     
     /* DO rozruchu silnika */
     licznik++;
